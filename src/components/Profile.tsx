@@ -90,7 +90,10 @@ export function ProfileForm({ onSaved }: { onSaved?: () => void }) {
   async function choose() {
     try {
       const p = await pickImage();
-      if (p) setPhoto(p);
+      if (p) {
+        setPhoto(p);
+        toast("New picture ready. Press Save profile to keep it.");
+      }
     } catch (e) {
       fail(e);
     }
@@ -341,12 +344,16 @@ export function Backdrop() {
 export function BackdropPicker() {
   const backdrop = useApp((s) => s.settings.backdrop) ?? { image: null, blur: true };
   const setSetting = useApp((s) => s.setSetting);
+  const toast = useApp((s) => s.toast);
   const fail = useApp((s) => s.fail);
   const src = useFileSrc(backdrop.image);
   async function choose() {
     try {
       const p = await pickImage();
-      if (p) await setSetting("backdrop", { ...backdrop, image: p });
+      if (p) {
+        await setSetting("backdrop", { ...backdrop, image: p });
+        toast(src ? "Background picture changed" : "Background picture added");
+      }
     } catch (e) {
       fail(e);
     }
@@ -367,7 +374,7 @@ export function BackdropPicker() {
             <ImagePlus size={16} /> {src ? "Change picture" : "Choose a picture"}
           </Button>
           {src && (
-            <Button type="button" size="sm" onClick={() => setSetting("backdrop", { ...backdrop, image: null }).catch(fail)}>
+            <Button type="button" size="sm" onClick={() => setSetting("backdrop", { ...backdrop, image: null }).then(() => toast("Background picture removed"), fail)}>
               <Trash2 size={16} /> Remove
             </Button>
           )}

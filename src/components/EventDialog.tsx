@@ -419,7 +419,10 @@ export function EventDialog() {
             onClick={async () => {
               try {
                 const p = await pickImage();
-                if (p) set({ imagePath: p });
+                if (p) {
+                  set({ imagePath: p });
+                  toast("Picture added. Save the event to keep it.");
+                }
               } catch (x) {
                 fail(x);
               }

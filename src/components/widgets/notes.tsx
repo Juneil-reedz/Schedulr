@@ -25,6 +25,7 @@ export function QuoteCard({ className }: { className?: string }) {
   const image = useApp((s) => s.settings.quoteImage);
   const setNotes = useApp((s) => s.setNotesDialog);
   const setSetting = useApp((s) => s.setSetting);
+  const toast = useApp((s) => s.toast);
   const fail = useApp((s) => s.fail);
   const src = useFileSrc(image);
   const quotes = useMemo(() => notes.filter((n) => n.kind === "quote"), [notes]);
@@ -37,7 +38,10 @@ export function QuoteCard({ className }: { className?: string }) {
   async function changeArt() {
     try {
       const p = await pickImage();
-      if (p) await setSetting("quoteImage", p);
+      if (p) {
+        await setSetting("quoteImage", p);
+        toast("Quote card picture changed");
+      }
     } catch (e) {
       fail(e);
     }

@@ -1,1 +1,2 @@
 - Times now show on the 12-hour clock (8:05 PM) everywhere, including reminder notifications. Prefer 24-hour time? Switch it on in Settings.
+- A short message now confirms every picture you add, change or remove (profile, background, dashboard, quote card and event pictures).

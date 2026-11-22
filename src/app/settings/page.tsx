@@ -289,7 +289,10 @@ export default function SettingsPage() {
   const choose = async (key: "featuredImage" | "quoteImage") => {
     try {
       const p = await pickImage();
-      if (p) await setSetting(key, p);
+      if (p) {
+        await setSetting(key, p);
+        toast(key === "featuredImage" ? "Dashboard picture changed" : "Quote card picture changed");
+      }
     } catch (e) {
       fail(e);
     }
@@ -404,7 +407,7 @@ export default function SettingsPage() {
                   <ImagePlus size={16} /> Choose
                 </Button>
                 {s.featuredImage && (
-                  <Button tone="ghost" size="sm" onClick={() => setSetting("featuredImage", null)}>
+                  <Button tone="ghost" size="sm" onClick={() => setSetting("featuredImage", null).then(() => toast("Back to the painting"), fail)}>
                     Use the painting
                   </Button>
                 )}
@@ -416,7 +419,7 @@ export default function SettingsPage() {
                   <ImagePlus size={16} /> Choose
                 </Button>
                 {s.quoteImage && (
-                  <Button tone="ghost" size="sm" onClick={() => setSetting("quoteImage", null)}>
+                  <Button tone="ghost" size="sm" onClick={() => setSetting("quoteImage", null).then(() => toast("Back to the flowers"), fail)}>
                     Use the flowers
                   </Button>
                 )}

@@ -32,12 +32,16 @@ export function FeaturedFrame({ className }: { className?: string }) {
   const fallbackImage = useApp((s) => s.settings.featuredImage);
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
+  const toast = useApp((s) => s.toast);
   const src = useFileSrc(occ?.event.imagePath || fallbackImage);
 
   async function changePicture() {
     try {
       const path = await pickImage();
-      if (path) await setSetting("featuredImage", path);
+      if (path) {
+        await setSetting("featuredImage", path);
+        toast("Dashboard picture changed");
+      }
     } catch (e) {
       fail(e);
     }
