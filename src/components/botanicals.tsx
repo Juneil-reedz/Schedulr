@@ -159,15 +159,17 @@ export function Cactus({ className }: P) {
 }
 
 /** The painted marigold band of flowers and leaves along a vine. */
-export function FloralVine({ className }: P) {
+/** The painted vine; `vertical` turns it to run top to bottom for the sidebar. */
+export function FloralVine({ className, vertical = false }: P & { vertical?: boolean }) {
   const f = useId().replace(/:/g, "");
   const flowers = [
     [40, 30, 13, "var(--rose)"], [118, 22, 11, "var(--terracotta-soft)"], [196, 34, 14, "var(--rose)"], [276, 20, 10, "var(--rose-soft)"],
     [352, 32, 13, "var(--terracotta-soft)"], [430, 22, 12, "var(--rose)"], [510, 34, 13, "var(--rose-soft)"], [588, 24, 11, "var(--rose)"],
   ] as const;
   return (
-    <svg viewBox="0 0 620 56" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden="true">
+    <svg viewBox={vertical ? "0 0 56 620" : "0 0 620 56"} preserveAspectRatio="xMidYMid slice" className={className} aria-hidden="true">
       <defs><Painterly id={f} /></defs>
+      <g transform={vertical ? "translate(56 0) rotate(90)" : undefined}>
       <g filter={`url(#${f})`}>
         <path d="M0 40 C 60 20 100 46 160 30 S 260 18 320 34 S 430 46 480 28 S 580 22 620 36" stroke="var(--forest-soft)" strokeWidth="2.4" fill="none" />
         {flowers.map(([x, y], i) => (
@@ -177,6 +179,7 @@ export function FloralVine({ className }: P) {
           </g>
         ))}
         {flowers.map(([x, y, r, c], i) => <Bloom key={i} x={x} y={y} r={r} petals={i % 3 === 0 ? 8 : 6} color={c} rotate={i * 17} />)}
+      </g>
       </g>
     </svg>
   );
