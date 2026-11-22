@@ -2,6 +2,7 @@ mod ics;
 mod recur;
 mod reminders;
 mod store;
+mod tts;
 
 use chrono::Local;
 use rusqlite::{Connection, OpenFlags, MAIN_DB};
@@ -371,6 +372,21 @@ fn test_notification(app: AppHandle, state: State<'_, AppState>) -> Res<()> {
     send_notification(&app, "Schedulr reminders are on", "This is how your reminders will appear and sound.", sound.as_deref())
 }
 
+/// Windows speech voices for Pip, with whether each is a woman's voice.
+#[tauri::command]
+async fn tts_voices() -> Res<Vec<tts::Voice>> {
+    tauri::async_runtime::spawn_blocking(tts::voices).await.map_err(err)?
+}
+
+/// One line of Pip's speech as WAV audio, sent back as raw bytes.
+#[tauri::command]
+async fn tts_render(text: String, voice_id: Option<String>, pitch: f64, rate: f64) -> Res<tauri::ipc::Response> {
+    let wav = tauri::async_runtime::spawn_blocking(move || tts::render(&text, voice_id.as_deref(), pitch, rate))
+        .await
+        .map_err(err)??;
+    Ok(tauri::ipc::Response::new(wav))
+}
+
 // ---------------- app ----------------
 
 fn show_main(app: &AppHandle) {
@@ -484,7 +500,8 @@ pub fn run() {
             bootstrap, occurrences, search_events, get_event, save_event, duplicate_event, delete_event, move_event,
             find_conflicts, featured, tasks, save_task, set_task_done, delete_task, notes, save_note, delete_note,
             set_setting, reminder_feed, snooze_reminder, dismiss_reminder, complete_reminder, battery, backup_now,
-            list_backups, restore_backup, export_json, export_ics, import_attachment, test_notification
+            list_backups, restore_backup, export_json, export_ics, import_attachment, test_notification,
+            tts_voices, tts_render
         ])
         .run(tauri::generate_context!())
         .expect("error while running Schedulr");

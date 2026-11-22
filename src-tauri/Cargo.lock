@@ -3563,6 +3563,7 @@ dependencies = [
  "tauri-plugin-updater",
  "tempfile",
  "uuid",
+ "windows",
 ]
 
 [[package]]

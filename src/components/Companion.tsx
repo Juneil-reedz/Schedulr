@@ -14,7 +14,7 @@ import type { CompanionSettings } from "@/lib/types";
 import { Bunny } from "./companion/Bunny";
 import { Marigold } from "./companion/Marigold";
 import { useWalker } from "./companion/useWalker";
-import { listVoices, onVoicesChanged, pickVoice, VOICE_STYLES } from "@/lib/companion/voice";
+import { listVoices, nativeLabel, nativeVoices, onVoicesChanged, pickNative, pickVoice, VOICE_STYLES, type NativeVoice } from "@/lib/companion/voice";
 import { Chosen, choiceClass } from "./Profile";
 
 const SIZE = { bunny: { w: 92, h: 112 }, marigold: { w: 74, h: 88 } } as const;
@@ -144,15 +144,22 @@ export function CompanionSettingsPanel() {
   const s = { ...PIP_DEFAULTS, ...settings };
   const save = (patch: Partial<typeof s>) => setSetting("companion", { ...s, ...patch }).catch(fail);
 
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  // In the desktop app: Windows' voices (Pip renders and reshapes them). In a browser: its voices.
+  const [native, setNative] = useState<NativeVoice[] | null>(null);
+  const [browser, setBrowser] = useState<SpeechSynthesisVoice[]>([]);
   useEffect(() => {
-    const load = () => setVoices(listVoices());
+    nativeVoices().then(setNative);
+    const load = () => setBrowser(listVoices());
     load();
     return onVoicesChanged(load);
   }, []);
+  type Option = { value: string; label: string; lang: string };
+  const voices: Option[] = native
+    ? native.map((v) => ({ value: v.id, label: nativeLabel(v), lang: v.lang }))
+    : browser.map((v) => ({ value: v.name, label: `${v.name.replace(/^Microsoft\s+/, "")} (${v.lang})`, lang: v.lang }));
   const english = voices.filter((v) => /^en/i.test(v.lang));
   const others = voices.filter((v) => !/^en/i.test(v.lang));
-  const auto = pickVoice(null, s.pitch);
+  const autoName = native ? nativeLabel(pickNative(native, s.pitch).voice) : pickVoice(null, s.pitch)?.name.replace(/^Microsoft\s+/, "").replace(/ - .*$/, "");
 
   return (
     <div className="flex flex-col gap-1">
@@ -194,12 +201,12 @@ export function CompanionSettingsPanel() {
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Computer voice" htmlFor="pip-voice" className="sm:col-span-2">
           <Select id="pip-voice" value={s.voiceName ?? ""} onChange={(e) => save({ voiceName: e.target.value || null })} disabled={!voices.length}>
-            <option value="">{auto ? `Matches the style (${auto.name.replace(/^Microsoft\s+/, "").replace(/ - .*$/, "")})` : "Matches the style"}</option>
+            <option value="">{autoName ? `Matches the style (${autoName})` : "Matches the style"}</option>
             {english.length > 0 && (
               <optgroup label="English">
                 {english.map((v) => (
-                  <option key={v.name} value={v.name}>
-                    {v.name.replace(/^Microsoft\s+/, "")} ({v.lang})
+                  <option key={v.value} value={v.value}>
+                    {v.label}
                   </option>
                 ))}
               </optgroup>
@@ -207,8 +214,8 @@ export function CompanionSettingsPanel() {
             {others.length > 0 && (
               <optgroup label="Other languages">
                 {others.map((v) => (
-                  <option key={v.name} value={v.name}>
-                    {v.name.replace(/^Microsoft\s+/, "")} ({v.lang})
+                  <option key={v.value} value={v.value}>
+                    {v.label}
                   </option>
                 ))}
               </optgroup>

@@ -3,7 +3,8 @@ name: Windows installer
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    # dev/* branches build and test only; main also publishes the release.
+    branches: [main, "dev/**"]
     tags: ["v*"]
 
 permissions:
@@ -32,7 +33,7 @@ jobs:
           workspaces: src-tauri
       - run: npm ci
       - name: Rust tests (database, recurrence, reminders, .ics)
-        run: cargo test --lib
+        run: cargo test --lib -- --nocapture
         working-directory: src-tauri
       - name: Skip update signing (no key added yet)
         if: env.HAS_SIGNING_KEY != 'true'
@@ -45,7 +46,7 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
       - name: Write the update feed
-        if: env.HAS_SIGNING_KEY == 'true'
+        if: env.HAS_SIGNING_KEY == 'true' && github.ref == 'refs/heads/main'
         shell: bash
         run: node scripts/update-feed.mjs "${{ github.repository }}"
       - uses: actions/upload-artifact@v4
@@ -62,7 +63,7 @@ jobs:
       # always has the newest installer. Raising "version" in tauri.conf.json (and Cargo.toml,
       # package.json) starts a new release, and installed copies are offered the update.
       - name: Publish the release
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
