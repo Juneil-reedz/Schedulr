@@ -132,7 +132,17 @@ export interface ComposioSettings {
   userId: string;
 }
 
+export type ThemeId = "marigold" | "talavera" | "seaglass" | "desertrose" | "night";
+
+export interface Profile {
+  name: string;
+  /** Stored attachment path, or a data URL in the browser preview. */
+  photo: string | null;
+}
+
 export interface Settings {
+  theme?: ThemeId;
+  profile?: Profile;
   focus?: Focus;
   closeToTray?: boolean;
   snoozeMinutes?: number;

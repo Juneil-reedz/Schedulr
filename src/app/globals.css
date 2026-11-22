@@ -27,8 +27,14 @@
   --on-dark: #fbf4e8;
   --danger: #a8432d;
 
+  /* text that sits on marigold, in every theme */
+  --on-marigold: #392c24;
+
   /* derived surfaces */
   --shadow-ink: 92 62 38;
+  --hi: 255 255 255;
+  --hi-a: 0.65;
+  --field: color-mix(in oklab, var(--cream) 70%, white);
   --text: var(--espresso);
   --text-muted: var(--espresso-soft);
   --surface: var(--cream);
@@ -40,12 +46,12 @@
   --font-body: "Figtree Variable", "Segoe UI", system-ui, sans-serif;
 
   /* clay */
-  --clay-raise: inset 2px 3px 1px rgb(255 255 255 / 0.65), inset -3px -6px 10px rgb(var(--shadow-ink) / 0.12),
+  --clay-raise: inset 2px 3px 1px rgb(var(--hi) / var(--hi-a)), inset -3px -6px 10px rgb(var(--shadow-ink) / 0.12),
     0 1px 1px rgb(var(--shadow-ink) / 0.12), 0 18px 28px -16px rgb(var(--shadow-ink) / 0.38), 0 6px 10px -6px rgb(var(--shadow-ink) / 0.2);
-  --clay-lift: inset 2px 3px 1px rgb(255 255 255 / 0.65), inset -3px -6px 10px rgb(var(--shadow-ink) / 0.12),
+  --clay-lift: inset 2px 3px 1px rgb(var(--hi) / var(--hi-a)), inset -3px -6px 10px rgb(var(--shadow-ink) / 0.12),
     0 1px 1px rgb(var(--shadow-ink) / 0.12), 0 28px 38px -18px rgb(var(--shadow-ink) / 0.42), 0 10px 14px -8px rgb(var(--shadow-ink) / 0.22);
-  --clay-press: inset 2px 3px 6px rgb(var(--shadow-ink) / 0.22), inset -1px -2px 1px rgb(255 255 255 / 0.5);
-  --clay-sunk: inset 2px 3px 6px rgb(var(--shadow-ink) / 0.16), inset -2px -3px 2px rgb(255 255 255 / 0.55);
+  --clay-press: inset 2px 3px 6px rgb(var(--shadow-ink) / 0.22), inset -1px -2px 1px rgb(var(--hi) / calc(var(--hi-a) * 0.8));
+  --clay-sunk: inset 2px 3px 6px rgb(var(--shadow-ink) / 0.16), inset -2px -3px 2px rgb(var(--hi) / calc(var(--hi-a) * 0.85));
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.45, 0, 0.25, 1);
@@ -56,13 +62,59 @@
   color-scheme: light;
 }
 
-/* Sleep mode: a dim evening glaze over the same materials. */
-:root[data-sleep="true"] {
-  --ivory: #d9cdbb;
-  --plaster: #d2c4b0;
-  --cream: #e3d5c1;
-  --cream-deep: #d6c5ad;
-  --text: #2e241d;
+/* ---------- themes ----------
+   Token names are roles, not literal colours: in Talavera the "terracotta" accent is cobalt.
+   Every theme keeps the same clay materials; only the glaze changes. */
+:root[data-theme="talavera"] {
+  --ivory: #eef0f0; --plaster: #e6e8e6; --cream: #f7f6f2; --cream-deep: #e4e4de; --sand: #cfd2cd;
+  --terracotta: #2f5d9e; --terracotta-deep: #234780; --terracotta-soft: #6f93c8;
+  --marigold: #e3b23c; --marigold-soft: #f0cd6e;
+  --forest: #1f3a5f; --forest-soft: #3a5a85; --sage: #7e9bb8; --sage-soft: #b3c6d8;
+  --rose: #c9705b; --rose-soft: #e3a898; --espresso: #22303f; --espresso-soft: #556273;
+  --on-dark: #f7f6f2; --danger: #b23a2e; --shadow-ink: 40 52 70;
+}
+:root[data-theme="seaglass"] {
+  --ivory: #e9efe9; --plaster: #e0e8e1; --cream: #f3f6f1; --cream-deep: #dde6de; --sand: #c5d2c7;
+  --terracotta: #d9705a; --terracotta-deep: #bb5640; --terracotta-soft: #eba08b;
+  --marigold: #e9b949; --marigold-soft: #f3d27f;
+  --forest: #1f5c5a; --forest-soft: #3e7f7b; --sage: #7fb0a3; --sage-soft: #b4d3ca;
+  --rose: #e59a8c; --rose-soft: #f2c3b9; --espresso: #22383a; --espresso-soft: #546b6b;
+  --on-dark: #f6f8f3; --danger: #b04a35; --shadow-ink: 40 70 66;
+}
+:root[data-theme="desertrose"] {
+  --ivory: #f4e7e2; --plaster: #eeddd6; --cream: #f8eeea; --cream-deep: #ebd8d0; --sand: #d9bfb4;
+  --terracotta: #b5566a; --terracotta-deep: #93404f; --terracotta-soft: #d68a98;
+  --marigold: #d9a441; --marigold-soft: #ebc777;
+  --forest: #4d5a36; --forest-soft: #6c7a50; --sage: #a3a77f; --sage-soft: #c8caa9;
+  --rose: #d98c8c; --rose-soft: #edb9b4; --espresso: #3d2a2a; --espresso-soft: #725856;
+  --on-dark: #fbf2ee; --danger: #a5383a; --shadow-ink: 100 60 55;
+}
+/* Night garden: dark clay. "forest" becomes the light heading colour, and text on accents turns dark. */
+:root[data-theme="night"] {
+  --ivory: #151d19; --plaster: #1a231e; --cream: #232e28; --cream-deep: #1b2520; --sand: #3a4840;
+  --terracotta: #e38c64; --terracotta-deep: #f0a27f; --terracotta-soft: #b8704f;
+  --marigold: #e8b54a; --marigold-soft: #f2cc77;
+  --forest: #c9dfc2; --forest-soft: #a6c49e; --sage: #7f9a76; --sage-soft: #5d7556;
+  --rose: #e28d86; --rose-soft: #b86d66; --espresso: #ede6da; --espresso-soft: #b7ad9f;
+  --on-dark: #151d19; --danger: #f08a7a; --shadow-ink: 0 0 0;
+  --hi: 255 255 255; --hi-a: 0.07;
+  --field: #18211c;
+  color-scheme: dark;
+}
+/* Paintings keep their daylight greens and browns on the dark theme. */
+:root[data-theme="night"] svg:not(.lucide) {
+  --forest: #2c5a43; --forest-soft: #3d6a52; --sage: #8d9c73; --espresso: #392c24; --cream: #f6ecdd; --sand: #dcc7a8; --on-dark: #fbf4e8;
+}
+
+/* Sleep mode: a dim evening glaze laid over whichever theme is on. */
+:root[data-sleep="true"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+  background: rgb(20 14 40 / 0.16);
+  mix-blend-mode: multiply;
 }
 
 @theme inline {
@@ -85,6 +137,7 @@
   --color-espresso: var(--espresso);
   --color-espresso-soft: var(--espresso-soft);
   --color-on-dark: var(--on-dark);
+  --color-on-marigold: var(--on-marigold);
   --color-danger: var(--danger);
   --color-ink: var(--text);
   --color-muted: var(--text-muted);
@@ -120,7 +173,7 @@
   --shadow-raise: var(--clay-raise);
   --shadow-sunk: var(--clay-sunk);
   --shadow-press: var(--clay-press);
-  --shadow-knob: inset 1px 2px 0 rgb(255 255 255 / 0.8), 0 2px 4px rgb(var(--shadow-ink) / 0.35);
+  --shadow-knob: inset 1px 2px 0 rgb(var(--hi) / calc(var(--hi-a) * 1.2)), 0 2px 4px rgb(var(--shadow-ink) / 0.35);
 }
 
 html,
@@ -185,7 +238,7 @@ h3,
 .clay {
   position: relative;
   background:
-    radial-gradient(130% 90% at 18% 8%, color-mix(in oklab, white 35%, transparent), transparent 55%),
+    radial-gradient(130% 90% at 18% 8%, rgb(var(--hi) / calc(var(--hi-a) * 0.55)), transparent 55%),
     var(--clay-fill, var(--surface));
   box-shadow: var(--clay-raise);
   border-radius: var(--clay-radius, 34px 40px 36px 44px / 38px 34px 42px 36px);

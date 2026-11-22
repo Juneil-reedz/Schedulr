@@ -103,7 +103,7 @@ export function MiniCalendar({ className }: { className?: string }) {
               className={cn(
                 "press relative mx-auto grid h-9 w-9 place-items-center rounded-full text-sm num",
                 isSameMonth(d, month) ? "text-ink" : "text-muted/55",
-                isToday && "bg-marigold font-bold text-espresso shadow-raise",
+                isToday && "bg-marigold font-bold text-on-marigold shadow-raise",
                 isSel && !isToday && "bg-cream-deep shadow-sunk",
                 isSel && isToday && "outline outline-2 outline-offset-2 outline-forest",
               )}

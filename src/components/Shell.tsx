@@ -9,13 +9,14 @@ import { TaskDialog } from "./TaskDialog";
 import { NotesDialog } from "./widgets/notes";
 import { Bloom } from "./botanicals";
 import { Help, cn } from "./ui";
+import { ProfileChip } from "./Profile";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: Flower2, fill: "var(--forest)", ink: "var(--cream)" },
   { href: "/calendar/", label: "Calendar", icon: CalendarDays, fill: "var(--cream)", ink: "var(--terracotta)" },
-  { href: "/events/", label: "Events", icon: Ticket, fill: "var(--marigold)", ink: "var(--forest)" },
+  { href: "/events/", label: "Events", icon: Ticket, fill: "var(--marigold)", ink: "var(--on-marigold)" },
   { href: "/meetings/", label: "Meetings", icon: Users, fill: "var(--sage)", ink: "var(--cream)" },
   { href: "/reminders/", label: "Reminders", icon: Bell, fill: "var(--terracotta)", ink: "var(--cream)" },
   { href: "/tasks/", label: "Tasks", icon: ListChecks, fill: "var(--cream)", ink: "var(--forest)" },
@@ -162,9 +163,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </svg>
           <span className="display text-3xl text-forest">Schedulr</span>
         </Link>
-        {ready && !desktop && (
-          <p className="rounded-full bg-cream-deep px-3.5 py-1.5 text-xs font-semibold text-muted shadow-sunk">Browser preview, nothing is saved</p>
-        )}
+        <div className="flex items-center gap-3">
+          {ready && !desktop && (
+            <p className="hidden rounded-full bg-cream-deep px-3.5 py-1.5 text-xs font-semibold text-muted shadow-sunk md:block">Browser preview, nothing is saved</p>
+          )}
+          {ready && <ProfileChip />}
+        </div>
       </header>
       <main id="main" className="relative z-[1] mx-auto max-w-[1480px] px-5 pb-40 pt-5 min-[600px]:pb-14 sm:px-8">
         {bootError ? (

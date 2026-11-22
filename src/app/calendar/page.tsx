@@ -114,7 +114,7 @@ function MonthView({ cursor, occ, move }: { cursor: Date; occ: Occurrence[]; mov
               <span
                 className={cn(
                   "num grid h-7 w-7 place-items-center self-end rounded-full text-sm",
-                  isSameDay(d, today) && "bg-marigold font-bold text-espresso shadow-raise",
+                  isSameDay(d, today) && "bg-marigold font-bold text-on-marigold shadow-raise",
                 )}
               >
                 {format(d, "d")}

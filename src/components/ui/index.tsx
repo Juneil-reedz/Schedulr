@@ -61,7 +61,7 @@ export function Toggle({
 }
 
 export const inputBase =
-  "w-full min-w-0 rounded-[14px] bg-[color-mix(in_oklab,var(--cream)_70%,white)] px-3.5 py-2.5 text-base text-ink shadow-sunk placeholder:text-muted/70 focus-visible:outline-[3px] focus-visible:outline-forest";
+  "w-full min-w-0 rounded-[14px] bg-[var(--field)] px-3.5 py-2.5 text-base text-ink shadow-sunk placeholder:text-muted/70 focus-visible:outline-[3px] focus-visible:outline-forest";
 
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, ...p }, ref) => (
   <input ref={ref} className={cn(inputBase, "h-11", className)} {...p} />

@@ -91,6 +91,7 @@ export const useApp = create<AppState>((set, get) => ({
       await get().refresh();
       set({ ready: true });
       document.documentElement.dataset.sleep = String(!!boot.settings.focus?.sleep);
+      document.documentElement.dataset.theme = boot.settings.theme ?? "marigold";
       listen("reminders-changed", () => {
         get().refreshFeed();
         get().refreshTasks();
@@ -123,6 +124,7 @@ export const useApp = create<AppState>((set, get) => ({
   setSetting: async (key, value) => {
     const settings = await api.setSetting(key, value);
     set({ settings });
+    if (key === "theme") document.documentElement.dataset.theme = String(value ?? "marigold");
   },
   setFocus: async (patch) => {
     const cur: Focus = { dnd: false, work: false, personal: false, sleep: false, ...get().settings.focus };

@@ -8,6 +8,7 @@ import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFil
 import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
 import { parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
+import { ProfileForm, ThemePicker } from "@/components/Profile";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -291,9 +292,20 @@ export default function SettingsPage() {
   };
   return (
     <>
-      <PageHeader title="Settings" help={<p>Reminders and startup, weather, pictures, backups and exports, and the optional connection to other calendars.</p>} />
+      <PageHeader title="Settings" help={<p>Your profile and theme, reminders and startup, weather, pictures, backups and exports, and the optional connection to other calendars.</p>} />
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <div className="flex flex-col gap-6">
+          <section className="clay shape-b px-6 py-5">
+            <SectionTitle>Profile</SectionTitle>
+            <div className="mt-3">
+              <ProfileForm />
+            </div>
+          </section>
+          <section className="clay shape-c px-6 py-5">
+            <SectionTitle>Theme</SectionTitle>
+            <p className="mb-3 mt-1 text-sm text-muted">Each theme keeps the clay look and changes the colours. Night garden is a dark theme.</p>
+            <ThemePicker />
+          </section>
           <section className="clay shape-a px-6 py-5">
             <SectionTitle>Reminders and startup</SectionTitle>
             <Row title="Keep running in the tray when closed" hint="Reminders keep coming while the window is closed. Quit from the tray icon.">

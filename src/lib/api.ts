@@ -57,13 +57,32 @@ export const api = {
 /** Turns a stored attachment path into something an <img> can show. */
 export async function fileSrc(path: string | null | undefined): Promise<string | null> {
   if (!path) return null;
+  if (path.startsWith("data:")) return path;
   if (!isDesktop()) return null;
   const { convertFileSrc } = await import("@tauri-apps/api/core");
   return convertFileSrc(path);
 }
 
+/** In the browser preview a chosen picture is kept in memory as a data URL. */
+function pickImageInBrowser(): Promise<string | null> {
+  return new Promise((resolve) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/png,image/jpeg,image/webp,image/gif";
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) return resolve(null);
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  });
+}
+
 export async function pickImage(): Promise<string | null> {
-  if (!isDesktop()) throw "Choosing a picture needs the desktop app.";
+  if (!isDesktop()) return pickImageInBrowser();
   const { open } = await import("@tauri-apps/plugin-dialog");
   const file = await open({ multiple: false, directory: false, filters: [{ name: "Images", extensions: ["png", "jpg", "jpeg", "webp", "gif", "svg"] }] });
   if (!file || Array.isArray(file)) return null;

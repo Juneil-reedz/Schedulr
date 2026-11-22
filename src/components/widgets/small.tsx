@@ -177,7 +177,7 @@ export function QuickTiles({ className }: { className?: string }) {
   const openTask = useApp((s) => s.openTask);
   const setNotes = useApp((s) => s.setNotesDialog);
   const tiles = [
-    { label: "New event", icon: CalendarPlus, fill: "var(--marigold)", ink: "var(--forest)", on: () => openEvent({ kind: "event" }) },
+    { label: "New event", icon: CalendarPlus, fill: "var(--marigold)", ink: "var(--on-marigold)", on: () => openEvent({ kind: "event" }) },
     { label: "New meeting", icon: Users, fill: "var(--sage)", ink: "var(--cream)", on: () => openEvent({ kind: "meeting" }) },
     { label: "New task", icon: ListTodo, fill: "var(--terracotta)", ink: "var(--cream)", on: () => openTask() },
     { label: "Quick note", icon: NotebookPen, fill: "var(--cream)", ink: "var(--terracotta)", on: () => setNotes(true) },
