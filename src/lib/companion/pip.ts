@@ -7,7 +7,7 @@ import type { CompanionSettings } from "@/lib/types";
 import { compose, MOOD, type Address, type Mood, type Topic, type Vars } from "./lines";
 import { onFirstActivation, soundAllowed, speak } from "./voice";
 
-export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "normal", title: "monarch", character: "bunny", roam: true };
+export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "child", title: "monarch", character: "bunny", roam: true };
 
 export function pipSettings(): CompanionSettings {
   return { ...PIP_DEFAULTS, ...(useApp.getState().settings.companion ?? {}) };
@@ -41,7 +41,8 @@ interface PipState {
 let ids = 0;
 let cancelSpeech: (() => void) | null = null;
 let timers: ReturnType<typeof setTimeout>[] = [];
-let offActivation: (() => void) | null = null;
+/** The last line shown without sound because the page had not been clicked yet. */
+let unheard: Line | null = null;
 
 function address(): Address {
   const s = pipSettings();
@@ -78,8 +79,6 @@ export const usePip = create<PipState>((set, get) => {
 
   const play = (line: Line) => {
     clearTimers();
-    offActivation?.();
-    offActivation = null;
     cancelSpeech?.();
     cancelSpeech = null;
     set({ line, speaking: false });
@@ -117,22 +116,30 @@ export const usePip = create<PipState>((set, get) => {
             cancelSpeech?.();
             silently();
           }
-        }, 1800),
+        }, 4500),
       );
     };
 
     if (!voiceWanted()) return silently();
     if (soundAllowed()) return start();
-    // No click or key press yet: show the words now, and speak them on the first one if still fresh.
+    // No click or key press yet: show the words now; the first click or key press says them aloud.
+    unheard = line;
     silently();
-    offActivation = onFirstActivation(() => {
-      if (get().line?.id === line.id && !finished && Date.now() - line.at < 120_000 && voiceWanted()) {
-        clearTimers();
-        silent = false;
-        start();
-      }
-    });
   };
+
+  // The browser allows sound after the first click or key press: say the latest unheard line
+  // (usually the greeting) then, if it is from the last few minutes.
+  if (typeof window !== "undefined") {
+    onFirstActivation(() => {
+      const l = unheard;
+      unheard = null;
+      if (!l || Date.now() - l.at > 180_000 || !voiceWanted()) return;
+      const again: Line = { ...l, id: ++ids, at: Date.now() };
+      const cur = get().line;
+      if (cur && cur.id !== l.id) set({ queue: [again, ...get().queue] });
+      else play(again);
+    });
+  }
 
   const next = () => {
     const [head, ...rest] = get().queue;
@@ -173,7 +180,6 @@ export const usePip = create<PipState>((set, get) => {
     stop: () => {
       cancelSpeech?.();
       clearTimers();
-      offActivation?.();
       set({ line: null, speaking: false, queue: [] });
     },
   };

@@ -141,7 +141,7 @@ export interface CompanionSettings {
   voice: boolean;
   /** A voice name from the computer, or null for the best available. */
   voiceName: string | null;
-  pitch: "low" | "normal" | "high";
+  pitch: "low" | "normal" | "high" | "child";
   /** How Pip looks. */
   character: "bunny" | "marigold";
   /** Walk along the tops of the cards. */

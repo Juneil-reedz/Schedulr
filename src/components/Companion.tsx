@@ -48,8 +48,14 @@ function Roamer({ s, save }: { s: CompanionSettings; save: (patch: Partial<Compa
 
   // A pat makes Pip happy for a moment.
   const [patted, setPatted] = useState(false);
+  const lastPatTalk = useRef(0);
   useEffect(() => {
     if (!pat) return;
+    // Now and then a pat gets a word, which also lets the browser play Pip's voice.
+    if (!usePip.getState().line && Date.now() - lastPatTalk.current > 20_000) {
+      lastPatTalk.current = Date.now();
+      usePip.getState().say("pat");
+    }
     setPatted(true);
     const t = setTimeout(() => setPatted(false), 1400);
     return () => clearTimeout(t);
@@ -145,7 +151,7 @@ export function CompanionSettingsPanel() {
   }, []);
   const english = voices.filter((v) => /^en/i.test(v.lang));
   const others = voices.filter((v) => !/^en/i.test(v.lang));
-  const auto = pickVoice(null);
+  const auto = pickVoice(null, s.pitch === "child");
 
   return (
     <div className="flex flex-col gap-1">
@@ -183,15 +189,16 @@ export function CompanionSettingsPanel() {
           </Select>
         </Field>
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-muted">Pitch</span>
+          <span className="text-sm font-semibold text-muted">Voice style</span>
           <Segmented
-            label="Voice pitch"
+            label="Voice style"
             value={s.pitch}
             onChange={(v) => save({ pitch: v })}
             options={[
-              { value: "low", label: "Low" },
-              { value: "normal", label: "Normal" },
+              { value: "child", label: "Little child" },
               { value: "high", label: "High" },
+              { value: "normal", label: "Normal" },
+              { value: "low", label: "Low" },
             ]}
             className="self-start"
           />

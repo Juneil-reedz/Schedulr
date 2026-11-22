@@ -1,4 +1,4 @@
 - Meet Pip, your royal herald: a little crowned bunny who greets you, reads out your day and announces reminders. Pip only talks; it never listens.
 - Pip hops along the tops of your cards. Drag Pip anywhere and it drops onto the card below; click to give a pat.
 - Pip reacts to your schedule: waving, cheering when you finish a task, surprised by urgent reminders and sleepy on quiet days.
-- Choose Pip's look (bunny or marigold), voice and pitch, or mute or hide Pip, in Settings.
+- Pip speaks in a little child's voice by default. Choose the look (bunny or marigold), voice and voice style, or mute or hide Pip, in Settings.

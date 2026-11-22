@@ -3,8 +3,14 @@
    on the page once, so until then Pip shows the words without speaking and says the
    latest line on that first click or key press. */
 
-export type Pitch = "low" | "normal" | "high";
-const PITCH: Record<Pitch, number> = { low: 0.85, normal: 1.08, high: 1.3 };
+export type Pitch = "low" | "normal" | "high" | "child";
+/** Pitch and pace for each voice style. "child" is high and a little quick, like a small kid. */
+const STYLE: Record<Pitch, { pitch: number; rate: number }> = {
+  low: { pitch: 0.85, rate: 1 },
+  normal: { pitch: 1.08, rate: 1.02 },
+  high: { pitch: 1.3, rate: 1.04 },
+  child: { pitch: 1.75, rate: 1.1 },
+};
 
 export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -20,8 +26,8 @@ export function onVoicesChanged(cb: () => void) {
   return () => window.speechSynthesis.removeEventListener("voiceschanged", cb);
 }
 
-/** The chosen voice, or the friendliest English voice available. */
-export function pickVoice(name: string | null | undefined): SpeechSynthesisVoice | null {
+/** The chosen voice, or the friendliest English voice available (a child's voice first for the child style). */
+export function pickVoice(name: string | null | undefined, child = false): SpeechSynthesisVoice | null {
   const all = listVoices();
   if (!all.length) return null;
   if (name) {
@@ -30,7 +36,10 @@ export function pickVoice(name: string | null | undefined): SpeechSynthesisVoice
   }
   const en = all.filter((v) => /^en/i.test(v.lang));
   const pool = en.length ? en : all;
+  // Windows has a young girl's voice, "Microsoft Ana", on some computers.
+  const kid = child ? pool.find((v) => /\bana\b|child|kid/i.test(v.name)) : undefined;
   return (
+    kid ||
     pool.find((v) => /natural/i.test(v.name) && /aria|jenny|ava|emma|sonia|libby|natasha/i.test(v.name)) ||
     pool.find((v) => /natural/i.test(v.name)) ||
     pool.find((v) => /aria|jenny|zira|samantha|hazel|susan|libby/i.test(v.name)) ||
@@ -61,6 +70,10 @@ export function onFirstActivation(cb: () => void) {
   return off;
 }
 
+/** Holds the line being spoken; Chrome can otherwise lose it before it ends. */
+let current: SpeechSynthesisUtterance | null = null;
+export const speakingNow = () => current;
+
 export interface SpeakHandlers {
   onStart?: () => void;
   onWord?: () => void;
@@ -76,15 +89,23 @@ export function speak(text: string, opts: { voiceName?: string | null; pitch?: P
     return () => {};
   }
   const synth = window.speechSynthesis;
-  synth.cancel();
+  // Chrome can drop a line spoken straight after cancel(), so pause briefly when something was playing.
+  const busy = synth.speaking || synth.pending;
+  if (busy) synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  const v = pickVoice(opts.voiceName);
-  if (v) {
-    u.voice = v;
-    u.lang = v.lang;
+  current = u;
+  const style = STYLE[opts.pitch ?? "child"];
+  const v = pickVoice(opts.voiceName, opts.pitch === "child");
+  try {
+    if (v) {
+      u.voice = v;
+      u.lang = v.lang;
+    }
+  } catch {
+    /* an odd voice entry: the default voice is fine */
   }
-  u.pitch = PITCH[opts.pitch ?? "normal"];
-  u.rate = 1.02;
+  u.pitch = style.pitch;
+  u.rate = style.rate;
   let ended = false;
   const end = () => {
     if (ended) return;
@@ -100,11 +121,16 @@ export function speak(text: string, opts: { voiceName?: string | null; pitch?: P
     if (e.error === "not-allowed") h.onBlocked?.();
     end();
   };
-  synth.speak(u);
+  const go = () => {
+    if (synth.paused) synth.resume();
+    synth.speak(u);
+  };
+  const delay = busy ? setTimeout(go, 80) : (go(), undefined);
   // Some voices never report the end; give up after a generous estimate.
   const guard = setTimeout(end, 2500 + text.length * 110);
   return () => {
     clearTimeout(guard);
+    if (delay) clearTimeout(delay);
     ended = true;
     synth.cancel();
   };
