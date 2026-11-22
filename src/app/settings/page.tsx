@@ -304,27 +304,34 @@ export default function SettingsPage() {
               <ProfileForm />
             </div>
           </section>
-          <section className="clay shape-c px-6 py-5">
+          <section className="clay shape-c @container px-6 py-5">
             <SectionTitle>Theme</SectionTitle>
-            <p className="mb-3 mt-1 text-sm text-muted">Changes how everything looks, straight away. Your pages, buttons and data stay the same. The palette button in the top bar switches too.</p>
+            <p className="mt-1 text-sm text-muted">Changes how everything looks, straight away. Your pages, buttons and data stay the same. The palette button in the top bar switches too.</p>
+
+            <h3 className="mb-3 mt-5 text-md font-semibold text-forest">Style</h3>
             <StylePicker />
-            {(s.style ?? "original") === "original" ? (
-              <>
-                <p className="mb-3 mt-5 text-md font-semibold text-forest">Original colours</p>
+
+            <div className="mt-6 border-t border-line pt-5">
+              <h3 className="mb-3 text-md font-semibold text-forest">Colours</h3>
+              {(s.style ?? "original") === "original" ? (
                 <ThemePicker />
-              </>
-            ) : (
-              <p className="mt-4 text-sm text-muted">
-                {s.style === "glass" ? "Glass has its own honey, sky blue and ink colours." : "Soft 3D has its own pastel colours."} The Original colour palettes come back when you switch to Original.
-              </p>
-            )}
-            <p className="mb-1 mt-5 text-md font-semibold text-forest">Background picture</p>
-            <p className="mb-3 text-sm text-muted">Shown behind every page, in any theme. It looks best with Glass, where the panels are see-through.</p>
-            <BackdropPicker />
+              ) : (
+                <p className="text-sm text-muted">
+                  {s.style === "glass" ? "Glass has its own honey, sky blue and ink colours." : "Soft 3D has its own pastel mint and blush colours."} The five colour palettes are part of
+                  the Original style.
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 border-t border-line pt-5">
+              <h3 className="text-md font-semibold text-forest">Background picture</h3>
+              <p className="mb-3 mt-0.5 text-sm text-muted">Shown behind every page, in any style. It looks best with Glass, where the panels are see-through.</p>
+              <BackdropPicker />
+            </div>
           </section>
-          <section className="clay shape-b px-6 py-5">
+          <section className="clay shape-b @container px-6 py-5">
             <SectionTitle>Layout</SectionTitle>
-            <p className="mb-3 mt-1 text-sm text-muted">Arranges the pages differently. Every page, button and feature stays the same. On a narrow window the menu always sits at the bottom.</p>
+            <p className="mb-4 mt-1 text-sm text-muted">Arranges the pages differently. Every page, button and feature stays the same. On a narrow window the menu always sits at the bottom.</p>
             <LayoutPicker />
           </section>
           <section className="clay shape-a px-6 py-5">

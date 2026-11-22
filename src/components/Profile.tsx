@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ImagePlus, Palette, Trash2 } from "@/components/icons";
+import { Check, ImagePlus, Palette, Trash2 } from "@/components/icons";
 import { Button, Field, Input, Modal, Toggle, cn } from "./ui";
 import { Bloom } from "./botanicals";
 import { pickImage } from "@/lib/api";
@@ -155,12 +155,28 @@ export function ProfileDialog({ open, onOpenChange }: { open: boolean; onOpenCha
   );
 }
 
+/** A choice card: the same frame for every option, a check on the chosen one. */
+function choiceClass(on: boolean) {
+  return cn(
+    "press relative rounded-[20px] p-2.5 text-left outline-offset-2 transition-colors",
+    on ? "bg-cream-deep shadow-sunk outline-2 outline-terracotta" : "bg-[color-mix(in_oklab,var(--cream-deep)_45%,transparent)] hover:bg-cream-deep",
+  );
+}
+function Chosen({ on }: { on: boolean }) {
+  if (!on) return null;
+  return (
+    <span aria-hidden className="absolute -right-1.5 -top-1.5 z-[1] grid h-6 w-6 place-items-center rounded-full bg-terracotta text-on-dark shadow-raise">
+      <Check size={14} strokeWidth={3} />
+    </span>
+  );
+}
+
 export function ThemePicker() {
   const theme = useApp((s) => s.settings.theme ?? "marigold");
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
   return (
-    <div role="radiogroup" aria-label="Original colours" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div role="radiogroup" aria-label="Original colours" className="grid grid-cols-[repeat(auto-fit,minmax(92px,1fr))] gap-3">
       {THEMES.map((t) => {
         const on = theme === t.id;
         return (
@@ -169,18 +185,18 @@ export function ThemePicker() {
             type="button"
             role="radio"
             aria-checked={on}
+            title={t.note}
             onClick={() => setSetting("theme", t.id).catch(fail)}
-            className={cn("press flex items-center gap-3 rounded-[20px] p-3 text-left", on ? "bg-cream-deep shadow-sunk outline-2 outline-offset-2 outline-terracotta" : "hover:bg-cream-deep/60")}
+            className={cn(choiceClass(on), "flex flex-col items-center gap-2")}
           >
-            <span className="flex shrink-0 overflow-hidden rounded-[14px] shadow-raise" aria-hidden>
+            <Chosen on={on} />
+            <span className="flex h-11 w-full overflow-hidden rounded-[12px] shadow-raise" aria-hidden>
               {t.swatch.map((c) => (
-                <span key={c} className="h-12 w-5" style={{ background: c }} />
+                <span key={c} className="flex-1" style={{ background: c }} />
               ))}
             </span>
-            <span className="min-w-0">
-              <span className="block text-md font-semibold text-ink">{t.name}</span>
-              <span className="block text-xs text-muted">{t.note}</span>
-            </span>
+            <span className="text-center text-sm font-semibold leading-tight text-ink">{t.name}</span>
+            <span className="sr-only">{t.note}</span>
           </button>
         );
       })}
@@ -189,9 +205,9 @@ export function ThemePicker() {
 }
 
 export const STYLES: { id: StyleId; name: string; note: string }[] = [
-  { id: "original", name: "Original", note: "The handmade clay look, with the colour palettes below." },
-  { id: "soft3d", name: "Soft 3D", note: "Pastel mint and blush, glossy rounded surfaces and floating cards." },
-  { id: "glass", name: "Glass", note: "Clear frosted panels and glossy jelly buttons over your own background picture." },
+  { id: "original", name: "Original", note: "Handmade clay, with five colour palettes." },
+  { id: "soft3d", name: "Soft 3D", note: "Pastel mint and blush, soft and glossy." },
+  { id: "glass", name: "Glass", note: "Frosted panels over your own picture." },
 ];
 
 const SAMPLE_BG: Record<StyleId, string> = {
@@ -260,7 +276,7 @@ export function StylePicker() {
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
   return (
-    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 @md:grid-cols-3">
       {STYLES.map((t) => {
         const on = style === t.id;
         return (
@@ -270,12 +286,15 @@ export function StylePicker() {
             role="radio"
             aria-checked={on}
             onClick={() => setSetting("style", t.id).catch(fail)}
-            className={cn("press flex items-center gap-3.5 rounded-[22px] p-3 text-left", on ? "bg-cream-deep shadow-sunk outline-2 outline-offset-2 outline-terracotta" : "hover:bg-cream-deep/60")}
+            className={cn(choiceClass(on), "flex items-center gap-3 @md:flex-col @md:items-stretch @md:gap-2.5")}
           >
-            <StyleSample id={t.id} />
-            <span className="min-w-0">
+            <Chosen on={on} />
+            <span className="grid h-[86px] w-[132px] shrink-0 place-items-center overflow-hidden rounded-[14px] bg-[color-mix(in_oklab,var(--cream)_70%,transparent)] @md:w-full">
+              <StyleSample id={t.id} />
+            </span>
+            <span className="min-w-0 @md:px-1 @md:pb-1">
               <span className="block text-md font-semibold text-ink">{t.name}</span>
-              <span className="block text-xs text-muted">{t.note}</span>
+              <span className="block text-xs leading-snug text-muted">{t.note}</span>
             </span>
           </button>
         );
@@ -393,7 +412,7 @@ export function LayoutPicker() {
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
   return (
-    <div role="radiogroup" aria-label="Layout" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div role="radiogroup" aria-label="Layout" className="grid grid-cols-1 gap-3 @md:grid-cols-3">
       {LAYOUTS.map((l) => {
         const on = layout === l.id;
         return (
@@ -403,15 +422,15 @@ export function LayoutPicker() {
             role="radio"
             aria-checked={on}
             onClick={() => setSetting("layout", l.id).catch(fail)}
-            className={cn(
-              "press flex items-center gap-3 rounded-[20px] p-3 text-left sm:flex-col sm:items-start",
-              on ? "bg-cream-deep shadow-sunk outline-2 outline-offset-2 outline-terracotta" : "hover:bg-cream-deep/60",
-            )}
+            className={cn(choiceClass(on), "flex items-center gap-3 @md:flex-col @md:items-stretch @md:gap-2.5")}
           >
-            <LayoutSample id={l.id} />
-            <span className="min-w-0">
+            <Chosen on={on} />
+            <span className="grid h-[86px] w-[132px] shrink-0 place-items-center rounded-[14px] bg-[color-mix(in_oklab,var(--cream)_70%,transparent)] @md:w-full">
+              <LayoutSample id={l.id} />
+            </span>
+            <span className="min-w-0 @md:px-1 @md:pb-1">
               <span className="block text-md font-semibold text-ink">{l.name}</span>
-              <span className="block text-xs text-muted">{l.note}</span>
+              <span className="block text-xs leading-snug text-muted">{l.note}</span>
             </span>
           </button>
         );
