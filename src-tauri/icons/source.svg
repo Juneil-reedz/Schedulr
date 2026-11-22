@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="tile" cx="40%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#F7EEDF"/>
+      <stop offset="1" stop-color="#E6D2B8"/>
+    </radialGradient>
+    <radialGradient id="petal" cx="50%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#E58A7C"/>
+      <stop offset="1" stop-color="#BB6545"/>
+    </radialGradient>
+    <radialGradient id="heart" cx="40%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#F3C35A"/>
+      <stop offset="1" stop-color="#D9921F"/>
+    </radialGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="230" fill="#BB6545"/>
+  <rect x="96" y="92" width="832" height="836" rx="206" fill="url(#tile)"/>
+  <g transform="translate(512 470)">
+    <path d="M-40 150 C -150 140 -230 60 -250 -10 C -170 0 -90 50 -40 150 Z" fill="#8D9C73"/>
+    <path d="M40 160 C 160 160 240 90 268 20 C 180 20 100 70 40 160 Z" fill="#6F8158"/>
+    <path d="M0 120 C -8 200 -4 260 0 330" stroke="#234B38" stroke-width="22" fill="none" stroke-linecap="round"/>
+    <g fill="url(#petal)">
+      <ellipse rx="92" ry="140" transform="translate(0 -120)"/>
+      <ellipse rx="92" ry="140" transform="rotate(72) translate(0 -120)"/>
+      <ellipse rx="92" ry="140" transform="rotate(144) translate(0 -120)"/>
+      <ellipse rx="92" ry="140" transform="rotate(216) translate(0 -120)"/>
+      <ellipse rx="92" ry="140" transform="rotate(288) translate(0 -120)"/>
+    </g>
+    <circle r="88" fill="url(#heart)"/>
+    <circle r="88" fill="none" stroke="#B9781A" stroke-width="6" opacity=".5"/>
+  </g>
+</svg>
