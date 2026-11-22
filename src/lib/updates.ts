@@ -6,6 +6,7 @@
 import { create } from "zustand";
 import { errorText, isDesktop, listen } from "./api";
 import { useApp } from "./store";
+import { useIntro } from "./intro";
 
 export type UpdateStatus = "idle" | "checking" | "current" | "available" | "downloading" | "installing" | "offline" | "error";
 
@@ -42,7 +43,7 @@ const POP_AGAIN = 30 * 60 * 1000;
 /** Opens the update window when nothing else is open (a dialog the person is using wins). */
 function popUp(open: () => void, tries = 0) {
   if (typeof document === "undefined") return;
-  if (!document.querySelector("[role=dialog]") || tries > 24) open();
+  if ((!document.querySelector("[role=dialog]") && useIntro.getState().done) || tries > 24) open();
   else setTimeout(() => popUp(open, tries + 1), 5_000);
 }
 

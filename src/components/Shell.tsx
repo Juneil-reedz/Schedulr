@@ -13,6 +13,7 @@ import { Backdrop, ProfileChip, StyleToggle } from "./Profile";
 import { UpdateBadge, UpdateDialog } from "./Updates";
 import { FeedbackButton } from "./Feedback";
 import { Companion } from "./Companion";
+import { Intro } from "./Intro";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
@@ -227,6 +228,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </div>
       {layout !== "topbar" && <Dock variant={layout} />}
       <Toaster />
+      <Intro />
       {ready && (
         <>
           <EventDialog />

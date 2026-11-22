@@ -10,6 +10,7 @@ import { fmtTime, parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
 import { BackdropPicker, LayoutPicker, ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
 import { UpdatesPanel } from "@/components/Updates";
+import { introEnabled, setIntroEnabled } from "@/lib/intro";
 import { CompanionSettingsPanel } from "@/components/Companion";
 import { FeedbackForm } from "@/components/Feedback";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
@@ -276,6 +277,8 @@ function Integrations() {
 }
 
 export default function SettingsPage() {
+  const [intro, setIntro] = useState(true);
+  useEffect(() => setIntro(introEnabled()), []);
   const s = useApp((x) => x.settings);
   const setSetting = useApp((x) => x.setSetting);
   const desktop = useApp((x) => x.desktop);
@@ -374,6 +377,16 @@ export default function SettingsPage() {
             </Row>
             <Row title="24-hour clock">
               <Toggle label="24-hour clock" checked={s.clock24h ?? false} onChange={(v) => setSetting("clock24h", v).catch(fail)} />
+            </Row>
+            <Row title="Opening animation" hint="A short welcome with the blooming flower each time Schedulr starts. Click to skip it any time.">
+              <Toggle
+                label="Opening animation"
+                checked={intro}
+                onChange={(v) => {
+                  setIntroEnabled(v);
+                  setIntro(v);
+                }}
+              />
             </Row>
             <Row title="Notification sound" hint={`${systemName()} plays this with every reminder, so you notice it even when Schedulr is hidden.`}>
               <Select

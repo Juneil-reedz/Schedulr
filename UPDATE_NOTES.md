@@ -1,1 +1,3 @@
+- A new opening screen: the flower blooms, Schedulr greets you, and the app opens like a lens. Click to skip, or turn it off in Settings.
 - New versions now pop up whenever you open Schedulr's window, even when it was running in the tray, and Schedulr checks for updates every hour.
+- Schedulr now has Linux versions too (.deb, .rpm and AppImage).

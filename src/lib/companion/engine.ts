@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { dateStr, fmtTime, isDateOnly, parse } from "@/lib/dates";
 import { useApp, useVisible } from "@/lib/store";
+import { useIntro } from "@/lib/intro";
 import type { Occurrence, Task } from "@/lib/types";
 import { things } from "./lines";
 import { pipSettings, usePip } from "./pip";
@@ -35,6 +36,7 @@ export function useCompanionEngine(active: boolean) {
   const feed = useApp((s) => s.feed);
   const rev = useApp((s) => s.rev);
   const sleep = useApp((s) => !!s.settings.focus?.sleep);
+  const introDone = useIntro((s) => s.done);
   const visible = useVisible();
   const say = usePip((s) => s.say);
   const setBase = usePip((s) => s.setBase);
@@ -64,7 +66,7 @@ export function useCompanionEngine(active: boolean) {
 
   /** Opening: greeting, the day's summary, missed reminders. */
   useEffect(() => {
-    if (!ready || !active || greeted.current) return;
+    if (!ready || !active || !introDone || greeted.current) return;
     greeted.current = true;
     const t = setTimeout(async () => {
       const now = new Date();
@@ -99,7 +101,7 @@ export function useCompanionEngine(active: boolean) {
       for (const i of st.feed) if (i.status === "fired" || i.status === "missed") announced.current.add(`rem:${i.key}`);
     }, 1800);
     return () => clearTimeout(t);
-  }, [ready, active, say]);
+  }, [ready, active, introDone, say]);
 
   /** Every 30 seconds: events about to start, the resting mood, an occasional remark. */
   useEffect(() => {
