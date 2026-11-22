@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "@/components/icons";
 import { Button, Field, Segmented, Select, Toggle, cn } from "./ui";
+import { isLinux } from "@/lib/api";
 import { useApp } from "@/lib/store";
 import { useCompanionEngine } from "@/lib/companion/engine";
 import type { Mood } from "@/lib/companion/lines";
@@ -260,7 +261,9 @@ export function CompanionSettingsPanel() {
         {!voices.length && <span className="text-xs text-muted">No speech voices found on this computer, so Pip shows the words only.</span>}
       </div>
       <p className="mt-3 text-xs text-muted">
-        Pip uses the speech voices on this computer. To add more, open Windows Settings, then Time &amp; language, Speech, and Manage voices.
+        {isLinux()
+          ? "Pip uses the speech voices on this computer when it has any. Without them, Pip shows the words only."
+          : "Pip uses the speech voices on this computer. To add more, open Windows Settings, then Time & language, Speech, and Manage voices."}
       </p>
     </div>
   );

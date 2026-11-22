@@ -4,7 +4,7 @@ import { Archive, Download, FolderOpen, ImagePlus, Link2, RotateCcw, Search } fr
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/Shell";
 import { Button, Field, Input, Segmented, Select, SectionTitle, Toggle } from "@/components/ui";
-import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFile, pickImage, revealPath } from "@/lib/api";
+import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFile, pickImage, revealPath, isLinux, systemName } from "@/lib/api";
 import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
 import { fmtTime, parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
@@ -349,9 +349,9 @@ export default function SettingsPage() {
             <Row title="Keep running in the tray when closed" hint="Reminders keep coming while the window is closed. Quit from the tray icon.">
               <Toggle label="Keep running in the tray" checked={s.closeToTray ?? true} onChange={(v) => setSetting("closeToTray", v).catch(fail)} />
             </Row>
-            <Row title="Start with Windows" hint="Opens quietly in the tray when you sign in, so reminders are never off.">
+            <Row title={isLinux() ? "Start when you sign in" : "Start with Windows"} hint="Opens quietly in the tray when you sign in, so reminders are never off.">
               <Toggle
-                label="Start with Windows"
+                label={isLinux() ? "Start when you sign in" : "Start with Windows"}
                 checked={auto}
                 onChange={async (v) => {
                   try {
@@ -375,7 +375,7 @@ export default function SettingsPage() {
             <Row title="24-hour clock">
               <Toggle label="24-hour clock" checked={s.clock24h ?? false} onChange={(v) => setSetting("clock24h", v).catch(fail)} />
             </Row>
-            <Row title="Notification sound" hint="Windows plays this with every reminder, so you notice it even when Schedulr is hidden.">
+            <Row title="Notification sound" hint={`${systemName()} plays this with every reminder, so you notice it even when Schedulr is hidden.`}>
               <Select
                 aria-label="Notification sound"
                 className="w-auto min-w-[180px]"
@@ -383,7 +383,7 @@ export default function SettingsPage() {
                 onChange={(e) => setSetting("notifySound", e.target.value).catch(fail)}
               >
                 <option value="Reminder">Reminder chime</option>
-                <option value="Default">Windows default</option>
+                <option value="Default">{systemName()} default</option>
                 <option value="IM">Message</option>
                 <option value="Mail">Mail</option>
                 <option value="SMS">Text message</option>

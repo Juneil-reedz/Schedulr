@@ -20,7 +20,7 @@ export function ClockTile({ className }: { className?: string }) {
   return (
     <section aria-label="Clock" className={cn("clay shape-b clay-lift relative overflow-hidden px-7 pb-6 pt-5", className)}>
       <Help title="Clock" className="absolute right-4 top-4 z-[2]">
-        <p>The time, day and date from your computer’s clock, with your time zone. It stays in step with Windows.</p>
+        <p>The time, day and date from your computer’s clock, with your time zone. It stays in step with your computer.</p>
         <p>Switch between 24-hour and 12-hour time in Settings.</p>
       </Help>
       <p className="display num text-[clamp(60px,6.2vw,92px)] leading-[0.95] text-terracotta">
@@ -143,7 +143,7 @@ export function StatsTile({ className }: { className?: string }) {
   return (
     <section aria-label={battery ? "Battery" : "Tasks today"} className={cn("clay shape-pill clay-lift relative flex flex-col items-center px-4 pb-6 pt-4 text-center max-[479px]:grid max-[479px]:grid-cols-[auto_1fr] max-[479px]:items-center max-[479px]:gap-x-4 max-[479px]:px-7 max-[479px]:py-4 max-[479px]:text-left", className)}>
       <Help title={battery ? "Battery" : "Tasks today"} className="absolute right-3 top-3 z-[2]">
-        <p>Shows your laptop’s battery when Windows reports one. Schedulr never guesses it.</p>
+        <p>Shows your laptop’s battery when the computer reports one. Schedulr never guesses it.</p>
         <p>Without a battery it shows how many of today’s tasks are done, and how many deadlines fall in the next 7 days.</p>
       </Help>
       <Cactus className="sway h-20 w-20 max-[479px]:row-span-4" />

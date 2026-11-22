@@ -9,6 +9,16 @@ A local-first planner for events, meetings, tasks, notes and reminders, in a flo
 
 The `.msi` file is the same app for people who prefer Windows Installer packages. You only need one of the two.
 
+## Install on Linux (64-bit)
+
+Pick the file for your system below:
+
+- **Ubuntu, Debian, Linux Mint, Pop!_OS:** download the `.deb`, then double-click it to open it in your software installer, or run `sudo apt install ./Schedulr_*_amd64.deb` in the folder you saved it to.
+- **Fedora, openSUSE:** download the `.rpm`, then run `sudo dnf install ./Schedulr-*.x86_64.rpm` (openSUSE: `sudo zypper install ./Schedulr-*.x86_64.rpm`).
+- **Any other Linux:** download the `.AppImage`, make it runnable with `chmod +x Schedulr_*_amd64.AppImage`, then double-click it. On Ubuntu 22.04 and newer you may first need `sudo apt install libfuse2` (on 24.04: `libfuse2t64`).
+
+Schedulr appears in your applications menu. Your data is saved in `~/.local/share/com.schedulr.app`. Pip's voice needs speech voices on the computer; without them Pip shows the words only.
+
 ## Updates
 
 From version 1.1.0 on, Schedulr checks for new versions by itself whenever you are online. When one is ready, an **Update** button appears in the top bar and Windows shows a notification. Click it, then **Update now**: Schedulr downloads the new version, closes for a moment and opens again. You can also check any time in **Settings > Updates**.

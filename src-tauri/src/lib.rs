@@ -56,10 +56,24 @@ fn notify_sound(conn: &Connection) -> Option<String> {
     }
 }
 
+/// On Linux, the Windows sound names become the matching freedesktop sound-theme names.
+fn system_sound(name: &str) -> String {
+    if cfg!(target_os = "linux") {
+        match name {
+            "Reminder" | "Alarm" | "Call" => "alarm-clock-elapsed",
+            "Mail" => "message-new-email",
+            _ => "message-new-instant",
+        }
+        .to_string()
+    } else {
+        name.to_string()
+    }
+}
+
 fn send_notification(app: &AppHandle, title: &str, body: &str, sound: Option<&str>) -> Result<(), String> {
     let mut n = app.notification().builder().title(title).body(body);
     if let Some(s) = sound {
-        n = n.sound(s);
+        n = n.sound(system_sound(s));
     }
     n.show().map_err(|e| e.to_string())
 }

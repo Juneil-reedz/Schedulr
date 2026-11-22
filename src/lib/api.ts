@@ -5,6 +5,11 @@ import type {
 
 export const isDesktop = () => typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
+/** The computer's system, for wording ("Start with Windows" or "Start when you sign in"). */
+export const isLinux = () => typeof navigator !== "undefined" && /Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent);
+/** The system's name for messages: Windows or Linux. */
+export const systemName = () => (isLinux() ? "Linux" : "Windows");
+
 async function call<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   if (isDesktop()) {
     const { invoke } = await import("@tauri-apps/api/core");
