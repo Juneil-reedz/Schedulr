@@ -9,6 +9,14 @@ on:
 permissions:
   contents: write
 
+# Add these in GitHub: Settings > Secrets and variables > Actions.
+#   TAURI_SIGNING_PRIVATE_KEY  signs each installer so installed copies can update themselves
+#   WEB3FORMS_KEY              lets the feedback form send straight to the developer's email
+# The build still works without them: updates are then not published and feedback opens
+# the person's email app instead.
+env:
+  HAS_SIGNING_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY != '' }}
+
 jobs:
   build:
     runs-on: windows-latest
@@ -26,8 +34,20 @@ jobs:
       - name: Rust tests (database, recurrence, reminders, .ics)
         run: cargo test --lib
         working-directory: src-tauri
+      - name: Skip update signing (no key added yet)
+        if: env.HAS_SIGNING_KEY != 'true'
+        shell: bash
+        run: node -e "const f='src-tauri/tauri.conf.json',fs=require('fs'),c=JSON.parse(fs.readFileSync(f));c.bundle.createUpdaterArtifacts=false;fs.writeFileSync(f,JSON.stringify(c,null,2))"
       - name: Build the installers
         run: npm run tauri build
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
+      - name: Write the update feed
+        if: env.HAS_SIGNING_KEY == 'true'
+        shell: bash
+        run: node scripts/update-feed.mjs "${{ github.repository }}"
       - uses: actions/upload-artifact@v4
         with:
           name: schedulr-windows-installers
@@ -39,7 +59,8 @@ jobs:
         shell: bash
         run: echo "tag=v$(node -p "require('./src-tauri/tauri.conf.json').version")" >> "$GITHUB_OUTPUT"
       # Every build of main refreshes the release for the current version, so its download page
-      # always has the newest installer. Raising "version" in tauri.conf.json starts a new release.
+      # always has the newest installer. Raising "version" in tauri.conf.json (and Cargo.toml,
+      # package.json) starts a new release, and installed copies are offered the update.
       - name: Publish the release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
@@ -50,6 +71,9 @@ jobs:
           body_path: RELEASE_NOTES.md
           make_latest: true
           overwrite_files: true
+          fail_on_unmatched_files: false
           files: |
             src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/nsis/*.exe.sig
             src-tauri/target/release/bundle/msi/*.msi
+            latest.json

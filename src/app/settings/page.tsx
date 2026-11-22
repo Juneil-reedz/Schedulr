@@ -9,6 +9,8 @@ import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
 import { parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
 import { BackdropPicker, LayoutPicker, ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
+import { UpdatesPanel } from "@/components/Updates";
+import { FeedbackForm } from "@/components/Feedback";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -391,6 +393,17 @@ export default function SettingsPage() {
           </section>
         </div>
         <div className="flex flex-col gap-6">
+          <section className="clay shape-a px-6 py-5">
+            <SectionTitle>Updates</SectionTitle>
+            <div className="mt-3">
+              <UpdatesPanel />
+            </div>
+          </section>
+          <section className="clay shape-c px-6 py-5">
+            <SectionTitle>Feedback</SectionTitle>
+            <p className="mb-4 mt-1 text-sm text-muted">Found a problem, or have an idea? It goes straight to the developer. The speech-bubble button in the top bar opens this too.</p>
+            <FeedbackForm />
+          </section>
           <Data />
           <Integrations />
           <p className="px-2 text-xs text-muted">{desktop ? `Schedulr ${version}` : "Browser preview. Install the desktop app to save your data."}</p>

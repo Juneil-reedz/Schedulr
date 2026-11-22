@@ -19,7 +19,7 @@ const js = await build({
   entryPoints: [path.join(root, "preview/main.tsx")], bundle: true, write: false, minify: true, format: "iife",
   jsx: "automatic", target: "es2020",
   alias: { "next/link": path.join(root, "preview/next-link.tsx"), "next/navigation": path.join(root, "preview/next-navigation.ts"), "@": path.join(root, "src") },
-  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_PREVIEW": '"1"' },
+  define: { "process.env.NODE_ENV": '"production"', "process.env.NEXT_PUBLIC_PREVIEW": '"1"', "process.env.NEXT_PUBLIC_WEB3FORMS_KEY": JSON.stringify(process.env.PREVIEW_WEB3FORMS_KEY ?? "") },
   loader: { ".svg": "text" },
 });
 

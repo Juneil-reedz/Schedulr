@@ -160,6 +160,8 @@ export interface Settings {
   theme?: ThemeId;
   profile?: Profile;
   backdrop?: Backdrop;
+  /** The newest version the person was already told about. */
+  updateNotified?: string;
   focus?: Focus;
   closeToTray?: boolean;
   snoozeMinutes?: number;

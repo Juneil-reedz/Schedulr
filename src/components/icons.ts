@@ -4,6 +4,12 @@
  */
 export {
   AlarmClock,
+  CircleCheck,
+  Mail,
+  MessageSquareHeart,
+  Send,
+  Sparkles,
+  WifiOff,
   Archive,
   BatteryCharging,
   Bell,

@@ -10,6 +10,8 @@ import { NotesDialog } from "./widgets/notes";
 import { Bloom } from "./botanicals";
 import { Help, cn } from "./ui";
 import { Backdrop, ProfileChip, StyleToggle } from "./Profile";
+import { UpdateBadge, UpdateDialog } from "./Updates";
+import { FeedbackButton } from "./Feedback";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
@@ -202,6 +204,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {ready && !desktop && (
             <p className="hidden rounded-full bg-cream-deep px-3.5 py-1.5 text-xs font-semibold text-muted shadow-sunk md:block">Browser preview, nothing is saved</p>
           )}
+          {ready && <UpdateBadge />}
+          {ready && <FeedbackButton />}
           {ready && <StyleToggle />}
           {ready && <ProfileChip />}
         </div>
@@ -227,6 +231,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <EventDialog />
           <TaskDialog />
           <NotesDialog />
+          <UpdateDialog />
         </>
       )}
     </>

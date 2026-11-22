@@ -1,0 +1,3 @@
+- Updates now arrive inside the app: Schedulr tells you when a new version is ready and installs it in one click.
+- Send feedback straight from Schedulr (top bar or Settings).
+- Glass theme, background picture, three layouts and floating cards everywhere.

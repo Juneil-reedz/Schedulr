@@ -17,6 +17,19 @@ The installers land in `src-tauri\target\release\bundle\nsis\Schedulr_1.0.0_x64-
 
 **Or on GitHub:** push this folder to a repository, open Actions, and run "Windows installer". The `.exe` and `.msi` are attached to the run.
 
+## Publish an update
+
+Installed copies check `latest.json` on the newest GitHub release and offer the update in the app.
+
+1. Raise the version in `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` and `package.json` (for example 1.1.0 to 1.2.0).
+2. Write what changed in `UPDATE_NOTES.md`, one line per change. This is what people see in the update window.
+3. Push to `main`. The workflow builds, signs and publishes release `v1.2.0` with `latest.json`.
+
+The workflow needs two repository secrets (Settings > Secrets and variables > Actions):
+
+- `TAURI_SIGNING_PRIVATE_KEY`: the updater's private key. Installed copies only accept updates signed with it; its public half is in `tauri.conf.json`. Keep the key safe; if it is lost, existing installs cannot be updated in the app.
+- `WEB3FORMS_KEY`: the access key from web3forms.com for the feedback form. Without it, feedback opens the person's email app instead.
+
 ## Develop
 
 ```bash
