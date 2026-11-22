@@ -12,7 +12,7 @@ import { useApp } from "@/lib/store";
 
 export default function MeetingsPage() {
   const openEvent = useApp((s) => s.openEvent);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const now = useNow(30_000);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const occ = useOccurrences(today, addDays(today, 14)).filter((o) => o.event.kind === "meeting" && parse(o.end) > now);

@@ -19,7 +19,7 @@ export function repeatLabel(e: SchedEvent) {
 export function EventList({ kind }: { kind?: "meeting" }) {
   const categories = useApp((s) => s.categories);
   const rev = useApp((s) => s.rev);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const bump = useApp((s) => s.bump);
   const toast = useApp((s) => s.toast);

@@ -30,7 +30,7 @@ export function EventDialog() {
   const { open, draft } = useApp((s) => s.eventDialog);
   const close = useApp((s) => s.closeEvent);
   const categories = useApp((s) => s.categories);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const bump = useApp((s) => s.bump);
   const toast = useApp((s) => s.toast);
   const fail = useApp((s) => s.fail);

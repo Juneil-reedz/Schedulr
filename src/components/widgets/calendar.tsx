@@ -127,7 +127,7 @@ export function MiniCalendar({ className }: { className?: string }) {
 /** The featured event, then the picked day's other events, beside the calendar. */
 export function DayAgenda({ className }: { className?: string }) {
   const calDay = useApp((s) => s.calDay);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const cat = useCategory();
   const featured = useFeatured();

@@ -35,8 +35,15 @@ pub struct Item {
     pub starts_at: Option<String>,
 }
 
+/// Whether notification text uses the 24-hour clock (Settings > 24-hour clock; off by default).
+static CLOCK_24: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
 fn clock(d: NaiveDateTime) -> String {
-    d.format("%H:%M").to_string()
+    if CLOCK_24.load(std::sync::atomic::Ordering::Relaxed) {
+        d.format("%H:%M").to_string()
+    } else {
+        d.format("%-I:%M %p").to_string()
+    }
 }
 
 fn when_phrase(offset: i64, start: NaiveDateTime, all_day: bool) -> String {
@@ -58,6 +65,8 @@ fn when_phrase(offset: i64, start: NaiveDateTime, all_day: bool) -> String {
 
 /// Every reminder instance whose fire time falls in `[from, to)`.
 pub fn instances(conn: &Connection, from: NaiveDateTime, to: NaiveDateTime) -> Res<Vec<Item>> {
+    let h24 = crate::store::get_setting(conn, "clock24h").and_then(|v| v.as_bool()).unwrap_or(false);
+    CLOCK_24.store(h24, std::sync::atomic::Ordering::Relaxed);
     let mut out = Vec::new();
     for ev in store::all_events(conn)? {
         if ev.reminders.is_empty() {
@@ -439,5 +448,15 @@ mod tests {
         let spy = Spy::default();
         set_setting(&c, "lastSeen", &serde_json::json!("2026-08-19T05:59")).unwrap();
         assert!(tick(&c, at("2026-08-19T06:00"), &spy).unwrap().fired.is_empty(), "dismissed in advance");
+    }
+
+    #[test]
+    fn notification_times_use_the_12_hour_clock_by_default() {
+        let t = chrono::NaiveDate::from_ymd_opt(2026, 11, 22).unwrap().and_hms_opt(21, 5, 0).unwrap();
+        CLOCK_24.store(false, std::sync::atomic::Ordering::Relaxed);
+        assert_eq!(clock(t), "9:05 PM");
+        CLOCK_24.store(true, std::sync::atomic::Ordering::Relaxed);
+        assert_eq!(clock(t), "21:05");
+        CLOCK_24.store(false, std::sync::atomic::Ordering::Relaxed);
     }
 }

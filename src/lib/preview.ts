@@ -18,7 +18,7 @@ const categories: Category[] = [
 let events: SchedEvent[] = [];
 let tasks: Task[] = [];
 let notes: Note[] = [];
-let settings: Settings = { closeToTray: true, snoozeMinutes: 10, clock24h: true };
+let settings: Settings = { closeToTray: true, snoozeMinutes: 10, clock24h: false };
 const log = new Map<string, ReminderItem>();
 let n = 0;
 const id = () => `p${Date.now().toString(36)}${(n++).toString(36)}`;

@@ -13,7 +13,7 @@ import type { Task } from "@/lib/types";
 const PRIORITY_COLOR = ["var(--sage-soft)", "var(--cream-deep)", "var(--marigold-soft)", "var(--terracotta-soft)"];
 
 function TaskRow({ t }: { t: Task }) {
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openTask = useApp((s) => s.openTask);
   const refreshTasks = useApp((s) => s.refreshTasks);
   const bump = useApp((s) => s.bump);

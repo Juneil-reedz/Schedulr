@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/Shell";
 import { Button, Field, Input, Segmented, Select, SectionTitle, Toggle } from "@/components/ui";
 import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFile, pickImage, revealPath } from "@/lib/api";
 import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
-import { parse } from "@/lib/dates";
+import { fmtTime, parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
 import { BackdropPicker, LayoutPicker, ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
 import { UpdatesPanel } from "@/components/Updates";
@@ -96,6 +96,7 @@ function Weather() {
 }
 
 function Data() {
+  const h24 = useApp((st) => st.settings.clock24h ?? false);
   const paths = useApp((s) => s.paths);
   const desktop = useApp((s) => s.desktop);
   const refresh = useApp((s) => s.refresh);
@@ -179,7 +180,7 @@ function Data() {
             {backups.map((b) => (
               <li key={b.path} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span className="text-sm">
-                  {format(parse(b.modified), "EEE d MMM yyyy, HH:mm")}
+                  {format(parse(b.modified), "EEE d MMM yyyy")}, {fmtTime(parse(b.modified), h24)}
                   <span className="text-muted">
                     {" "}
                     {b.name.includes("auto") ? "daily" : b.name.includes("before-restore") ? "before a restore" : "manual"}, {(b.size / 1024).toFixed(0)} KB
@@ -369,7 +370,7 @@ export default function SettingsPage() {
               </Select>
             </Row>
             <Row title="24-hour clock">
-              <Toggle label="24-hour clock" checked={s.clock24h ?? true} onChange={(v) => setSetting("clock24h", v).catch(fail)} />
+              <Toggle label="24-hour clock" checked={s.clock24h ?? false} onChange={(v) => setSetting("clock24h", v).catch(fail)} />
             </Row>
             <Row title="Notification sound" hint="Windows plays this with every reminder, so you notice it even when Schedulr is hidden.">
               <Select

@@ -11,7 +11,7 @@ import type { Focus } from "@/lib/types";
 
 export function ClockTile({ className }: { className?: string }) {
   const now = useNow(1000);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const offset = useApp((s) => s.timezone);
   const zone = typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
   const time = fmtTime(now, h24);
@@ -40,6 +40,7 @@ export function ClockTile({ className }: { className?: string }) {
 
 export function WeatherTile({ className }: { className?: string }) {
   const w = useWeather();
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const reading = w.kind === "live" || w.kind === "stale" ? w.reading : null;
   const kind = reading ? weatherKind(reading.code) : "sun";
   const Icon = !reading ? Sun : kind === "sun" ? (reading.isDay ? Sun : Moon) : Cloud;
@@ -58,7 +59,7 @@ export function WeatherTile({ className }: { className?: string }) {
             </p>
             <p className="mt-1 text-md font-semibold text-forest">{weatherText(reading.code)}</p>
             <p className="truncate text-xs text-muted">
-              {w.kind === "stale" ? `${reading.place}, as of ${format(parse(reading.at), "HH:mm")}` : reading.place}
+              {w.kind === "stale" ? `${reading.place}, as of ${fmtTime(parse(reading.at), h24)}` : reading.place}
             </p>
           </>
         ) : w.kind === "loading" ? (

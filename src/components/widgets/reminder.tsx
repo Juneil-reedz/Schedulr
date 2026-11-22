@@ -71,7 +71,7 @@ export function ReminderPlayer({ className }: { className?: string }) {
   const { all, attention } = useReminderList();
   const [i, setI] = useState(0);
   const now = useNow(15_000);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const cat = useCategory();
   const act = useReminderActions();
   const reduce = useReducedMotion();

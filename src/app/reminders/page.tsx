@@ -12,7 +12,7 @@ import type { ReminderItem } from "@/lib/types";
 
 function Row({ it }: { it: ReminderItem }) {
   const now = useNow(30_000);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const act = useReminderActions();
   const cat = useCategory();
   const openEvent = useApp((s) => s.openEvent);

@@ -35,7 +35,7 @@ function useMove() {
 
 function Chip({ o, compact }: { o: Occurrence; compact?: boolean }) {
   const cat = useCategory()(o.event.categoryId);
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const color = cat?.color ?? "var(--terracotta)";
   return (
@@ -157,7 +157,7 @@ function columns(items: Occurrence[]) {
 }
 
 function TimeGrid({ days, occ, move }: { days: Date[]; occ: Occurrence[]; move: ReturnType<typeof useMove> }) {
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const cat = useCategory();
   const scroller = useRef<HTMLDivElement>(null);
@@ -253,7 +253,7 @@ function TimeGrid({ days, occ, move }: { days: Date[]; occ: Occurrence[]; move: 
 }
 
 function Agenda({ occ }: { occ: Occurrence[] }) {
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const cat = useCategory();
   const byDay = useMemo(() => {

@@ -5,7 +5,7 @@ import { NotebookPen, Pin, PinOff, Plus, Search, Trash2 } from "@/components/ico
 import { PageHeader } from "@/components/Shell";
 import { Button, Input, cn } from "@/components/ui";
 import { api, confirmAsk, errorText } from "@/lib/api";
-import { parse, relDay } from "@/lib/dates";
+import { fmtTime, parse, relDay } from "@/lib/dates";
 import { useApp } from "@/lib/store";
 import type { Note } from "@/lib/types";
 
@@ -15,6 +15,7 @@ const blank = (): Note => ({ id: "", kind: "note", body: "", author: "", pinned:
 const titleOf = (body: string) => body.split("\n").map((l) => l.trim()).find(Boolean) ?? "Empty note";
 
 export default function NotepadPage() {
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const notes = useApp((s) => s.notes);
   const refreshNotes = useApp((s) => s.refreshNotes);
   const toast = useApp((s) => s.toast);
@@ -154,7 +155,7 @@ export default function NotepadPage() {
                       <span className="truncate text-md font-semibold text-ink">{titleOf(n.body)}</span>
                     </span>
                     <span className="truncate text-xs text-muted">
-                      {relDay(parse(n.updatedAt))}, {format(parse(n.updatedAt), "HH:mm")}
+                      {relDay(parse(n.updatedAt))}, {fmtTime(parse(n.updatedAt), h24)}
                     </span>
                   </button>
                 </li>
@@ -168,7 +169,7 @@ export default function NotepadPage() {
             <NotebookPen size={18} className="text-terracotta" aria-hidden />
             <p className="text-sm text-muted" role="status" aria-live="polite">
               {statusText}
-              {current.id && status === "saved" && current.updatedAt && `, ${format(parse(current.updatedAt), "HH:mm")}`}
+              {current.id && status === "saved" && current.updatedAt && `, ${fmtTime(parse(current.updatedAt), h24)}`}
             </p>
             <span className="flex-1" />
             <span className="num text-xs text-muted">{words === 1 ? "1 word" : `${words} words`}</span>

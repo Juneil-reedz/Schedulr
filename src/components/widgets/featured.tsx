@@ -76,7 +76,7 @@ export function FeaturedFrame({ className }: { className?: string }) {
 /** Title, time, place, countdown and the way into the event. */
 export function FeaturedDetails() {
   const occ = useFeatured();
-  const h24 = useApp((s) => s.settings.clock24h ?? true);
+  const h24 = useApp((s) => s.settings.clock24h ?? false);
   const openEvent = useApp((s) => s.openEvent);
   const now = useNow(30_000);
 
