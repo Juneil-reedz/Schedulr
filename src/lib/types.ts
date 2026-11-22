@@ -132,8 +132,19 @@ export interface ComposioSettings {
   userId: string;
 }
 
-/** The overall look: the original clay, or the Soft 3D style. */
-export type StyleId = "original" | "soft3d";
+/** The overall look: the original clay, Soft 3D, or Glass. */
+export type StyleId = "original" | "soft3d" | "glass";
+
+/** A picture shown behind every page, in any theme. */
+export interface Backdrop {
+  /** Stored attachment path, or a data URL in the browser preview. */
+  image: string | null;
+  /** Soften the picture so text stays easy to read. */
+  blur: boolean;
+}
+
+/** How pages are arranged. Every layout has the same pages and features. */
+export type LayoutId = "sidebar" | "topbar" | "compact";
 
 export type ThemeId = "marigold" | "talavera" | "seaglass" | "desertrose" | "night";
 
@@ -145,8 +156,10 @@ export interface Profile {
 
 export interface Settings {
   style?: StyleId;
+  layout?: LayoutId;
   theme?: ThemeId;
   profile?: Profile;
+  backdrop?: Backdrop;
   focus?: Focus;
   closeToTray?: boolean;
   snoozeMinutes?: number;

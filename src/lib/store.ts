@@ -93,6 +93,7 @@ export const useApp = create<AppState>((set, get) => ({
       document.documentElement.dataset.sleep = String(!!boot.settings.focus?.sleep);
       document.documentElement.dataset.theme = boot.settings.theme ?? "marigold";
       document.documentElement.dataset.style = boot.settings.style ?? "original";
+      document.documentElement.dataset.layout = boot.settings.layout ?? "sidebar";
       listen("reminders-changed", () => {
         get().refreshFeed();
         get().refreshTasks();
@@ -127,6 +128,7 @@ export const useApp = create<AppState>((set, get) => ({
     set({ settings });
     if (key === "theme") document.documentElement.dataset.theme = String(value ?? "marigold");
     if (key === "style") document.documentElement.dataset.style = String(value ?? "original");
+    if (key === "layout") document.documentElement.dataset.layout = String(value ?? "sidebar");
   },
   setFocus: async (patch) => {
     const cur: Focus = { dnd: false, work: false, personal: false, sleep: false, ...get().settings.focus };

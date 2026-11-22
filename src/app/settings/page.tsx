@@ -8,7 +8,7 @@ import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFil
 import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
 import { parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
-import { ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
+import { BackdropPicker, LayoutPicker, ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -311,8 +311,18 @@ export default function SettingsPage() {
                 <ThemePicker />
               </>
             ) : (
-              <p className="mt-4 text-sm text-muted">Soft 3D has its own pastel colours. The Original colour palettes come back when you switch to Original.</p>
+              <p className="mt-4 text-sm text-muted">
+                {s.style === "glass" ? "Glass has its own honey, sky blue and ink colours." : "Soft 3D has its own pastel colours."} The Original colour palettes come back when you switch to Original.
+              </p>
             )}
+            <p className="mb-1 mt-5 text-md font-semibold text-forest">Background picture</p>
+            <p className="mb-3 text-sm text-muted">Shown behind every page, in any theme. It looks best with Glass, where the panels are see-through.</p>
+            <BackdropPicker />
+          </section>
+          <section className="clay shape-b px-6 py-5">
+            <SectionTitle>Layout</SectionTitle>
+            <p className="mb-3 mt-1 text-sm text-muted">Arranges the pages differently. Every page, button and feature stays the same. On a narrow window the menu always sits at the bottom.</p>
+            <LayoutPicker />
           </section>
           <section className="clay shape-a px-6 py-5">
             <SectionTitle>Reminders and startup</SectionTitle>

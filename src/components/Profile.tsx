@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ImagePlus, Palette } from "@/components/icons";
-import { Button, Field, Input, Modal, cn } from "./ui";
+import { ImagePlus, Palette, Trash2 } from "@/components/icons";
+import { Button, Field, Input, Modal, Toggle, cn } from "./ui";
 import { Bloom } from "./botanicals";
 import { pickImage } from "@/lib/api";
 import { useFileSrc, useNow } from "@/lib/hooks";
 import { useApp } from "@/lib/store";
-import type { StyleId, ThemeId } from "@/lib/types";
+import type { LayoutId, StyleId, ThemeId } from "@/lib/types";
 
 export const THEMES: { id: ThemeId; name: string; note: string; swatch: string[] }[] = [
   { id: "marigold", name: "Marigold", note: "Warm plaster, terracotta and marigold", swatch: ["#f2e9db", "#bb6545", "#e5a72e", "#234b38"] },
@@ -191,17 +191,43 @@ export function ThemePicker() {
 export const STYLES: { id: StyleId; name: string; note: string }[] = [
   { id: "original", name: "Original", note: "The handmade clay look, with the colour palettes below." },
   { id: "soft3d", name: "Soft 3D", note: "Pastel mint and blush, glossy rounded surfaces and floating cards." },
+  { id: "glass", name: "Glass", note: "Clear frosted panels and glossy jelly buttons over your own background picture." },
 ];
+
+const SAMPLE_BG: Record<StyleId, string> = {
+  original: "#f2e9db",
+  soft3d: "linear-gradient(145deg, #fbe0d8, #dcefe4 55%, #cfe7da)",
+  glass: "radial-gradient(70% 70% at 20% 85%, #f2a38c, transparent 70%), radial-gradient(80% 80% at 90% 10%, #f6d48a, transparent 70%), #f7e4c2",
+};
 
 /** A tiny drawing of each style, so the choice is visual. */
 function StyleSample({ id }: { id: StyleId }) {
+  if (id === "glass") {
+    const bubble = (fill: string): React.CSSProperties => ({
+      background: `radial-gradient(60% 45% at 35% 22%, rgb(255 255 255 / .85), transparent 70%), ${fill}`,
+      boxShadow: "inset 0 -4px 6px rgb(255 255 255 / .35), inset 0 0 0 1px rgb(255 255 255 / .7), 0 5px 9px -4px rgb(120 80 30 / .45)",
+    });
+    return (
+      <span aria-hidden className="relative block h-[74px] w-[112px] shrink-0 overflow-hidden rounded-[18px]" style={{ background: SAMPLE_BG.glass }}>
+        <span
+          className="absolute left-2.5 top-2.5 h-[54px] w-[54px] rounded-[14px]"
+          style={{ background: "rgb(255 255 255 / .3)", backdropFilter: "blur(6px)", boxShadow: "inset 0 0 0 1.5px rgb(255 255 255 / .85), 0 6px 12px -6px rgb(120 80 30 / .4)" }}
+        />
+        <span className="absolute left-[18px] top-[18px] h-[18px] w-[18px] rounded-full" style={bubble("#f5b928")} />
+        <span className="absolute left-[40px] top-[18px] h-[18px] w-[18px] rounded-full" style={bubble("#1d1a15")} />
+        <span className="absolute left-[18px] top-[40px] h-[18px] w-[18px] rounded-full" style={bubble("#1d1a15")} />
+        <span className="absolute left-[40px] top-[40px] h-[18px] w-[18px] rounded-full" style={bubble("#f5b928")} />
+        <span className="absolute right-2.5 top-2.5 h-[54px] w-[30px] rounded-full" style={bubble("linear-gradient(180deg, rgb(255 255 255 / .35) 45%, #f5b928 45%)")} />
+      </span>
+    );
+  }
   const soft = id === "soft3d";
   return (
     <span
       aria-hidden
       className="relative block h-[74px] w-[112px] shrink-0 overflow-hidden rounded-[18px]"
       style={{
-        background: soft ? "linear-gradient(145deg, #fbe0d8, #dcefe4 55%, #cfe7da)" : "#f2e9db",
+        background: SAMPLE_BG[id],
         boxShadow: soft ? "inset 1px 1px 0 #fff, 6px 8px 16px -6px rgb(46 88 68 / .35)" : "inset 2px 3px 1px rgb(255 255 255/.6), 0 8px 14px -8px rgb(92 62 38 / .45)",
       }}
     >
@@ -234,7 +260,7 @@ export function StylePicker() {
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
   return (
-    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
       {STYLES.map((t) => {
         const on = style === t.id;
         return (
@@ -258,16 +284,138 @@ export function StylePicker() {
   );
 }
 
-/** One-click switch between the two themes, in the top bar. */
+/** One click moves to the next theme, in the top bar. */
 export function StyleToggle() {
   const style = useApp((s) => s.settings.style ?? "original");
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
-  const next: StyleId = style === "soft3d" ? "original" : "soft3d";
-  const label = `Switch to the ${next === "soft3d" ? "Soft 3D" : "Original"} theme`;
+  const i = STYLES.findIndex((t) => t.id === style);
+  const next = STYLES[(i + 1) % STYLES.length];
+  const label = `Switch to the ${next.name} theme`;
   return (
-    <Button tone="clay" size="icon" aria-label={label} title={label} onClick={() => setSetting("style", next).catch(fail)}>
+    <Button tone="clay" size="icon" aria-label={label} title={label} onClick={() => setSetting("style", next.id).catch(fail)}>
       <Palette size={19} />
     </Button>
+  );
+}
+
+/** The picture behind every page. Sits under all content and never takes clicks. */
+export function Backdrop() {
+  const backdrop = useApp((s) => s.settings.backdrop);
+  const src = useFileSrc(backdrop?.image);
+  useEffect(() => {
+    document.documentElement.dataset.backdrop = src ? "image" : "none";
+  }, [src]);
+  if (!src) return null;
+  return (
+    <div aria-hidden className="backdrop pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div
+        className="absolute -inset-10 bg-cover bg-center"
+        style={{ backgroundImage: `url("${src}")`, filter: backdrop?.blur ? "blur(18px) saturate(1.15)" : undefined }}
+      />
+      <div className="backdrop-veil absolute inset-0" />
+    </div>
+  );
+}
+
+/** Choose, soften or remove the background picture. */
+export function BackdropPicker() {
+  const backdrop = useApp((s) => s.settings.backdrop) ?? { image: null, blur: true };
+  const setSetting = useApp((s) => s.setSetting);
+  const fail = useApp((s) => s.fail);
+  const src = useFileSrc(backdrop.image);
+  async function choose() {
+    try {
+      const p = await pickImage();
+      if (p) await setSetting("backdrop", { ...backdrop, image: p });
+    } catch (e) {
+      fail(e);
+    }
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-4">
+      <span className="clay-sunk relative grid h-[84px] w-[132px] shrink-0 place-items-center overflow-hidden rounded-[18px]">
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={src} alt="Current background picture" className="h-full w-full object-cover" style={backdrop.blur ? { filter: "blur(3px)", scale: "1.08" } : undefined} />
+        ) : (
+          <span className="px-2 text-center text-xs text-muted">No picture</span>
+        )}
+      </span>
+      <div className="flex min-w-0 flex-col gap-2.5">
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" onClick={choose}>
+            <ImagePlus size={16} /> {src ? "Change picture" : "Choose a picture"}
+          </Button>
+          {src && (
+            <Button type="button" size="sm" onClick={() => setSetting("backdrop", { ...backdrop, image: null }).catch(fail)}>
+              <Trash2 size={16} /> Remove
+            </Button>
+          )}
+        </div>
+        <label className="flex items-center gap-2.5 text-sm text-ink">
+          <Toggle label="Soften the picture" checked={backdrop.blur} onChange={(v) => setSetting("backdrop", { ...backdrop, blur: v }).catch(fail)} />
+          Soften the picture
+        </label>
+      </div>
+    </div>
+  );
+}
+
+export const LAYOUTS: { id: LayoutId; name: string; note: string }[] = [
+  { id: "sidebar", name: "Sidebar", note: "Navigation down the left, the dashboard in three columns." },
+  { id: "topbar", name: "Top bar", note: "Navigation across the top, the dashboard as a wide grid." },
+  { id: "compact", name: "Compact", note: "A slim icon rail and cards packed closer together." },
+];
+
+const LAYOUT_BLOCKS: Record<LayoutId, { nav: number[]; blocks: number[][] }> = {
+  sidebar: { nav: [6, 10, 7, 44], blocks: [[20, 8, 32, 30], [20, 42, 32, 14], [56, 8, 16, 20], [56, 32, 16, 24], [76, 8, 14, 48]] },
+  topbar: { nav: [26, 6, 44, 7], blocks: [[8, 18, 38, 9], [49, 18, 19, 9], [71, 18, 18, 9], [8, 31, 38, 26], [49, 31, 19, 26], [71, 31, 18, 26]] },
+  compact: { nav: [5, 14, 5, 36], blocks: [[15, 6, 23, 22], [15, 31, 23, 27], [41, 6, 23, 14], [41, 23, 23, 35], [67, 6, 23, 30], [67, 39, 23, 19]] },
+};
+
+/** A small wireframe of each layout. */
+function LayoutSample({ id }: { id: LayoutId }) {
+  const { nav, blocks } = LAYOUT_BLOCKS[id];
+  const box = ([left, top, width, height]: number[]) => ({ left, top, width, height });
+  return (
+    <span aria-hidden className="clay-sunk relative block h-[64px] w-[96px] shrink-0 overflow-hidden rounded-[14px]">
+      <span className="absolute rounded-full bg-terracotta" style={box(nav)} />
+      {blocks.map((b, i) => (
+        <span key={i} className="absolute rounded-[4px] bg-[color-mix(in_oklab,var(--forest)_22%,transparent)]" style={box(b)} />
+      ))}
+    </span>
+  );
+}
+
+export function LayoutPicker() {
+  const layout = useApp((s) => s.settings.layout ?? "sidebar");
+  const setSetting = useApp((s) => s.setSetting);
+  const fail = useApp((s) => s.fail);
+  return (
+    <div role="radiogroup" aria-label="Layout" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {LAYOUTS.map((l) => {
+        const on = layout === l.id;
+        return (
+          <button
+            key={l.id}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            onClick={() => setSetting("layout", l.id).catch(fail)}
+            className={cn(
+              "press flex items-center gap-3 rounded-[20px] p-3 text-left sm:flex-col sm:items-start",
+              on ? "bg-cream-deep shadow-sunk outline-2 outline-offset-2 outline-terracotta" : "hover:bg-cream-deep/60",
+            )}
+          >
+            <LayoutSample id={l.id} />
+            <span className="min-w-0">
+              <span className="block text-md font-semibold text-ink">{l.name}</span>
+              <span className="block text-xs text-muted">{l.note}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }

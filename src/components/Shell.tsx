@@ -9,7 +9,7 @@ import { TaskDialog } from "./TaskDialog";
 import { NotesDialog } from "./widgets/notes";
 import { Bloom } from "./botanicals";
 import { Help, cn } from "./ui";
-import { ProfileChip, StyleToggle } from "./Profile";
+import { Backdrop, ProfileChip, StyleToggle } from "./Profile";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
@@ -24,17 +24,52 @@ const NAV = [
   { href: "/settings/", label: "Settings", icon: Settings, fill: "var(--sage-soft)", ink: "var(--forest)" },
 ];
 
-/* A sidebar on the left edge; on a very narrow window it becomes a bar at the bottom. */
-function Dock() {
+type DockVariant = "sidebar" | "topbar" | "compact";
+
+/* Where the navigation sits for each layout. On a very narrow window every layout
+   uses the same bar at the bottom, so the shared base is the bottom bar. */
+const DOCK: Record<DockVariant, { nav: string; ul: string; item: string; tile: string; active: string; idle: string; tag: string; label: string }> = {
+  sidebar: {
+    nav: "min-[600px]:inset-x-auto min-[600px]:bottom-auto min-[600px]:left-4 min-[600px]:top-1/2 min-[600px]:-translate-y-1/2 min-[600px]:px-0",
+    ul: "min-[600px]:flex-col min-[600px]:items-center min-[600px]:gap-2 min-[600px]:px-2.5 min-[600px]:py-5",
+    item: "min-[600px]:w-[74px]",
+    tile: "min-[600px]:h-12 min-[600px]:w-12",
+    active: "min-[600px]:translate-x-1.5 min-[600px]:translate-y-0",
+    idle: "min-[600px]:group-hover:translate-x-1 min-[600px]:group-hover:translate-y-0",
+    tag: "min-[600px]:bottom-auto min-[600px]:left-full min-[600px]:top-1/2 min-[600px]:mb-0 min-[600px]:ml-4 min-[600px]:-translate-x-1 min-[600px]:-translate-y-1/2 min-[600px]:group-hover:translate-x-0 min-[600px]:group-hover:-translate-y-1/2 min-[600px]:group-focus-visible:translate-x-0 min-[600px]:group-focus-visible:-translate-y-1/2",
+    label: "min-[600px]:block [@media(max-height:700px)]:!hidden",
+  },
+  compact: {
+    nav: "min-[600px]:inset-x-auto min-[600px]:bottom-auto min-[600px]:left-3 min-[600px]:top-1/2 min-[600px]:-translate-y-1/2 min-[600px]:px-0",
+    ul: "min-[600px]:flex-col min-[600px]:items-center min-[600px]:gap-1.5 min-[600px]:px-1.5 min-[600px]:py-3",
+    item: "min-[600px]:w-[52px]",
+    tile: "min-[600px]:h-11 min-[600px]:w-11",
+    active: "min-[600px]:translate-x-1 min-[600px]:translate-y-0",
+    idle: "min-[600px]:group-hover:translate-x-0.5 min-[600px]:group-hover:translate-y-0",
+    tag: "min-[600px]:bottom-auto min-[600px]:left-full min-[600px]:top-1/2 min-[600px]:mb-0 min-[600px]:ml-3.5 min-[600px]:-translate-x-1 min-[600px]:-translate-y-1/2 min-[600px]:group-hover:translate-x-0 min-[600px]:group-hover:-translate-y-1/2 min-[600px]:group-focus-visible:translate-x-0 min-[600px]:group-focus-visible:-translate-y-1/2",
+    label: "",
+  },
+  topbar: {
+    nav: "min-[600px]:sticky min-[600px]:inset-x-auto min-[600px]:top-3 min-[600px]:bottom-auto min-[600px]:mx-auto min-[600px]:mt-4 min-[600px]:w-fit",
+    ul: "min-[600px]:items-center min-[600px]:gap-1.5 min-[600px]:px-3 min-[600px]:py-2",
+    item: "min-[600px]:w-[60px] min-[820px]:w-[80px]",
+    tile: "min-[600px]:h-11 min-[600px]:w-11",
+    active: "",
+    idle: "",
+    tag: "min-[600px]:bottom-auto min-[600px]:top-full min-[600px]:mb-0 min-[600px]:mt-2.5 min-[600px]:-translate-y-1 min-[600px]:group-hover:-translate-y-0 min-[820px]:hidden",
+    label: "min-[820px]:block",
+  },
+};
+
+/* The main navigation. Its position depends on the chosen layout. */
+function Dock({ variant }: { variant: DockVariant }) {
   const path = usePathname() || "/";
   const attention = useApp((s) => s.feed.filter((i) => ["fired", "missed", "silenced"].includes(i.status)).length);
+  const v = DOCK[variant];
   return (
-    <nav
-      aria-label="Main"
-      className="fixed inset-x-0 bottom-3 z-30 flex justify-center px-3 min-[600px]:inset-x-auto min-[600px]:bottom-auto min-[600px]:left-4 min-[600px]:top-1/2 min-[600px]:-translate-y-1/2 min-[600px]:px-0"
-    >
+    <nav aria-label="Main" className={cn("fixed inset-x-0 bottom-3 z-30 flex justify-center px-3", v.nav)}>
       <ul
-        className="clay shape-pill flex items-end gap-0.5 px-2 pb-2 pt-2.5 min-[460px]:gap-1 min-[600px]:flex-col min-[600px]:items-center min-[600px]:gap-2 min-[600px]:px-2.5 min-[600px]:py-5"
+        className={cn("clay shape-pill flex items-end gap-0.5 px-2 pb-2 pt-2.5 min-[460px]:gap-1", v.ul)}
         style={{ ["--clay-fill" as string]: "var(--cream)" }}
       >
         {NAV.map((n) => {
@@ -45,20 +80,24 @@ function Dock() {
                 href={n.href}
                 aria-current={active ? "page" : undefined}
                 aria-label={n.label}
-                className="group flex w-[42px] flex-col items-center gap-1 rounded-[18px] min-[460px]:w-[50px] min-[600px]:w-[74px]"
+                className={cn("group flex w-[42px] flex-col items-center gap-1 rounded-[18px] min-[460px]:w-[50px]", v.item)}
               >
                 <span
                   className={cn(
-                    "clay shape-tile press relative grid h-10 w-10 place-items-center transition-transform duration-[260ms] ease-[var(--ease-out)] min-[460px]:h-11 min-[460px]:w-11 min-[600px]:h-12 min-[600px]:w-12",
-                    active ? "-translate-y-1.5 min-[600px]:translate-x-1.5 min-[600px]:translate-y-0" : "group-hover:-translate-y-1 min-[600px]:group-hover:translate-x-1 min-[600px]:group-hover:translate-y-0",
+                    "clay shape-tile press relative grid h-10 w-10 place-items-center transition-transform duration-[260ms] ease-[var(--ease-out)] min-[460px]:h-11 min-[460px]:w-11",
+                    v.tile,
+                    active ? cn("-translate-y-1.5", v.active) : cn("group-hover:-translate-y-1", v.idle),
                   )}
                   style={{ ["--clay-fill" as string]: n.fill }}
                 >
                   <n.icon size={22} strokeWidth={2.2} style={{ color: n.ink }} aria-hidden />
-                  {/* Name tag on hover or keyboard focus: beside the sidebar, above the bottom bar. */}
+                  {/* Name tag on hover or keyboard focus, wherever the labels are hidden. */}
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-full bg-forest px-3 py-1.5 text-sm font-semibold text-on-dark opacity-0 shadow-raise transition-[opacity,translate] duration-150 ease-[var(--ease-out)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 min-[600px]:bottom-auto min-[600px]:left-full min-[600px]:top-1/2 min-[600px]:mb-0 min-[600px]:ml-4 min-[600px]:-translate-x-1 min-[600px]:-translate-y-1/2 min-[600px]:group-hover:translate-x-0 min-[600px]:group-hover:-translate-y-1/2 min-[600px]:group-focus-visible:translate-x-0 min-[600px]:group-focus-visible:-translate-y-1/2"
+                    className={cn(
+                      "pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-full bg-forest px-3 py-1.5 text-sm font-semibold text-on-dark opacity-0 shadow-raise transition-[opacity,translate] duration-150 ease-[var(--ease-out)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100",
+                      v.tag,
+                    )}
                   >
                     {n.label}
                     {n.href === "/reminders/" && attention > 0 && `, ${attention} need you`}
@@ -67,13 +106,7 @@ function Dock() {
                     <span className="num absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-forest px-1 text-2xs font-bold text-on-dark">{attention}</span>
                   )}
                 </span>
-                <span
-                  aria-hidden
-                  className={cn(
-                    "hidden text-2xs leading-none min-[600px]:block [@media(max-height:700px)]:!hidden",
-                    active ? "font-bold text-terracotta" : "text-muted",
-                  )}
-                >
+                <span aria-hidden className={cn("hidden text-2xs leading-none", v.label, active ? "font-bold text-terracotta" : "text-muted")}>
                   {n.label}
                 </span>
                 <span aria-hidden className={cn("h-[3px] w-5 rounded-full bg-terracotta transition-opacity duration-200", active ? "opacity-100" : "opacity-0")} />
@@ -111,7 +144,7 @@ function Toaster() {
 
 export function PageHeader({ title, help, children }: { title: string; help?: React.ReactNode; children?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="page-header mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="flex items-center gap-3">
         <h1 className="display text-[clamp(34px,3.4vw,46px)] leading-none text-forest">{title}</h1>
         {help && <Help title={title}>{help}</Help>}
@@ -128,6 +161,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const desktop = useApp((s) => s.desktop);
   const openEvent = useApp((s) => s.openEvent);
   const openTask = useApp((s) => s.openTask);
+  const layout = useApp((s) => s.settings.layout ?? "sidebar");
 
   useEffect(() => {
     init();
@@ -155,7 +189,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-xl focus:bg-cream focus:px-4 focus:py-2">
         Skip to content
       </a>
-      <div className="min-[600px]:pl-[100px]">
+      <Backdrop />
+      <div className={cn(layout === "sidebar" && "min-[600px]:pl-[100px]", layout === "compact" && "min-[600px]:pl-[76px]")}>
       <header className="relative z-[1] mx-auto flex max-w-[1480px] items-center justify-between px-5 pt-5 sm:px-8">
         <Link href="/" className="flex items-center gap-2 rounded-xl">
           <svg viewBox="-14 -14 28 28" className="h-7 w-7" aria-hidden>
@@ -171,6 +206,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {ready && <ProfileChip />}
         </div>
       </header>
+      {layout === "topbar" && <Dock variant="topbar" />}
       <main id="main" className="relative z-[1] mx-auto max-w-[1480px] px-5 pb-40 pt-5 min-[600px]:pb-14 sm:px-8">
         {bootError ? (
           <div className="clay shape-a mx-auto max-w-[560px] p-8">
@@ -184,7 +220,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
       </main>
       </div>
-      <Dock />
+      {layout !== "topbar" && <Dock variant={layout} />}
       <Toaster />
       {ready && (
         <>
