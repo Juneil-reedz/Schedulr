@@ -54,6 +54,14 @@ function Dock() {
                   style={{ ["--clay-fill" as string]: n.fill }}
                 >
                   <n.icon size={22} strokeWidth={2.2} style={{ color: n.ink }} aria-hidden />
+                  {/* Name tag on hover or keyboard focus: beside the sidebar, above the bottom bar. */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-full bg-forest px-3 py-1.5 text-sm font-semibold text-on-dark opacity-0 shadow-raise transition-[opacity,translate] duration-150 ease-[var(--ease-out)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 min-[600px]:bottom-auto min-[600px]:left-full min-[600px]:top-1/2 min-[600px]:mb-0 min-[600px]:ml-4 min-[600px]:-translate-x-1 min-[600px]:-translate-y-1/2 min-[600px]:group-hover:translate-x-0 min-[600px]:group-hover:-translate-y-1/2 min-[600px]:group-focus-visible:translate-x-0 min-[600px]:group-focus-visible:-translate-y-1/2"
+                  >
+                    {n.label}
+                    {n.href === "/reminders/" && attention > 0 && `, ${attention} need you`}
+                  </span>
                   {n.href === "/reminders/" && attention > 0 && (
                     <span className="num absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-forest px-1 text-2xs font-bold text-on-dark">{attention}</span>
                   )}
