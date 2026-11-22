@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { EventDialog } from "./EventDialog";
 import { TaskDialog } from "./TaskDialog";
 import { NotesDialog } from "./widgets/notes";
-import { Bloom } from "./botanicals";
+import { Bloom, FloralVine } from "./botanicals";
 import { Help, cn } from "./ui";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
@@ -15,7 +15,7 @@ import { useApp } from "@/lib/store";
 const NAV = [
   { href: "/", label: "Dashboard", icon: Flower2, fill: "var(--forest)", ink: "var(--cream)" },
   { href: "/calendar/", label: "Calendar", icon: CalendarDays, fill: "var(--cream)", ink: "var(--terracotta)" },
-  { href: "/events/", label: "Events", icon: Ticket, fill: "var(--marigold)", ink: "var(--forest)" },
+  { href: "/events/", label: "Events", icon: Ticket, fill: "var(--forest-soft)", ink: "var(--marigold-soft)" },
   { href: "/meetings/", label: "Meetings", icon: Users, fill: "var(--sage)", ink: "var(--cream)" },
   { href: "/reminders/", label: "Reminders", icon: Bell, fill: "var(--terracotta)", ink: "var(--cream)" },
   { href: "/tasks/", label: "Tasks", icon: ListChecks, fill: "var(--cream)", ink: "var(--forest)" },
@@ -28,7 +28,10 @@ function Dock() {
   const attention = useApp((s) => s.feed.filter((i) => ["fired", "missed", "silenced"].includes(i.status)).length);
   return (
     <nav aria-label="Main" className="fixed inset-x-0 bottom-3 z-30 flex justify-center px-3">
-      <ul className="clay shape-pill flex items-end gap-0.5 px-2 pb-2 pt-2.5 min-[460px]:gap-1 sm:gap-2 sm:px-5" style={{ ["--clay-fill" as string]: "var(--cream)" }}>
+      <ul className="clay shape-pill flex items-end gap-0.5 overflow-hidden px-2 pb-2 pt-2.5 min-[460px]:gap-1 sm:gap-2 sm:px-5" style={{ ["--clay-fill" as string]: "var(--marigold)" }}>
+        <li aria-hidden className="pointer-events-none absolute inset-0 -z-[1] opacity-90">
+          <FloralVine className="h-full w-full" />
+        </li>
         {NAV.map((n) => {
           const active = n.href === "/" ? path === "/" : path.startsWith(n.href);
           return (
@@ -50,8 +53,8 @@ function Dock() {
                     <span className="num absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-forest px-1 text-2xs font-bold text-on-dark">{attention}</span>
                   )}
                 </span>
-                <span className={cn("hidden text-2xs leading-none sm:block", active ? "font-bold text-terracotta" : "text-muted")}>{n.label}</span>
-                <span aria-hidden className={cn("h-[3px] w-5 rounded-full bg-terracotta transition-opacity duration-200", active ? "opacity-100" : "opacity-0")} />
+                <span className={cn("hidden rounded-full px-2 py-[3px] text-2xs leading-none sm:block", active ? "bg-forest font-bold text-on-dark" : "bg-cream/90 text-ink")}>{n.label}</span>
+                <span aria-hidden className={cn("h-[3px] w-5 rounded-full bg-forest transition-opacity sm:hidden duration-200", active ? "opacity-100" : "opacity-0")} />
               </Link>
             </li>
           );

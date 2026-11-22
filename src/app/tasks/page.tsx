@@ -139,7 +139,7 @@ export default function TasksPage() {
           <Plus size={18} /> New task
         </Button>
       </PageHeader>
-      <form onSubmit={quickAdd} className="clay shape-pill mb-6 flex flex-wrap items-center gap-2 px-4 py-3">
+      <form onSubmit={quickAdd} className="clay shape-b mb-6 flex flex-wrap items-center gap-2 px-4 py-3">
         <label className="min-w-[220px] flex-1">
           <span className="sr-only">Task</span>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Add a task and press Enter" />
