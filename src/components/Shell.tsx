@@ -9,7 +9,7 @@ import { TaskDialog } from "./TaskDialog";
 import { NotesDialog } from "./widgets/notes";
 import { Bloom } from "./botanicals";
 import { Help, cn } from "./ui";
-import { ProfileChip } from "./Profile";
+import { ProfileChip, StyleToggle } from "./Profile";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
@@ -17,7 +17,7 @@ const NAV = [
   { href: "/", label: "Dashboard", icon: Flower2, fill: "var(--forest)", ink: "var(--cream)" },
   { href: "/calendar/", label: "Calendar", icon: CalendarDays, fill: "var(--cream)", ink: "var(--terracotta)" },
   { href: "/events/", label: "Events", icon: Ticket, fill: "var(--marigold)", ink: "var(--on-marigold)" },
-  { href: "/meetings/", label: "Meetings", icon: Users, fill: "var(--sage)", ink: "var(--cream)" },
+  { href: "/meetings/", label: "Meetings", icon: Users, fill: "var(--sage)", ink: "var(--on-sage)" },
   { href: "/reminders/", label: "Reminders", icon: Bell, fill: "var(--terracotta)", ink: "var(--cream)" },
   { href: "/tasks/", label: "Tasks", icon: ListChecks, fill: "var(--cream)", ink: "var(--forest)" },
   { href: "/notepad/", label: "Notepad", icon: NotebookPen, fill: "var(--rose-soft)", ink: "var(--terracotta-deep)" },
@@ -167,6 +167,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {ready && !desktop && (
             <p className="hidden rounded-full bg-cream-deep px-3.5 py-1.5 text-xs font-semibold text-muted shadow-sunk md:block">Browser preview, nothing is saved</p>
           )}
+          {ready && <StyleToggle />}
           {ready && <ProfileChip />}
         </div>
       </header>

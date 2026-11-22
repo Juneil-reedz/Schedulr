@@ -8,7 +8,7 @@ import { api, autostart, confirmAsk, errorText, openPath, openUrl, pickBackupFil
 import { TOOLKITS, connectLink, connectedAccounts } from "@/lib/composio";
 import { parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
-import { ProfileForm, ThemePicker } from "@/components/Profile";
+import { ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -303,8 +303,16 @@ export default function SettingsPage() {
           </section>
           <section className="clay shape-c px-6 py-5">
             <SectionTitle>Theme</SectionTitle>
-            <p className="mb-3 mt-1 text-sm text-muted">Each theme keeps the clay look and changes the colours. Night garden is a dark theme.</p>
-            <ThemePicker />
+            <p className="mb-3 mt-1 text-sm text-muted">Changes how everything looks, straight away. Your pages, buttons and data stay the same. The palette button in the top bar switches too.</p>
+            <StylePicker />
+            {(s.style ?? "original") === "original" ? (
+              <>
+                <p className="mb-3 mt-5 text-md font-semibold text-forest">Original colours</p>
+                <ThemePicker />
+              </>
+            ) : (
+              <p className="mt-4 text-sm text-muted">Soft 3D has its own pastel colours. The Original colour palettes come back when you switch to Original.</p>
+            )}
           </section>
           <section className="clay shape-a px-6 py-5">
             <SectionTitle>Reminders and startup</SectionTitle>

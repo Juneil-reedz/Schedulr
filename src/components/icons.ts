@@ -27,6 +27,7 @@ export {
   MapPin,
   Moon,
   NotebookPen,
+  Palette,
   Pencil,
   Pin,
   PinOff,

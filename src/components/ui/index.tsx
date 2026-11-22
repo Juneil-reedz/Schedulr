@@ -11,13 +11,13 @@ import { X } from "@/components/icons";
 export const cn = (...c: ClassValue[]) => twMerge(clsx(c));
 
 const button = cva(
-  "press inline-flex items-center justify-center gap-2 font-semibold whitespace-nowrap select-none disabled:opacity-50 disabled:pointer-events-none cursor-pointer",
+  "btn press inline-flex items-center justify-center gap-2 font-semibold whitespace-nowrap select-none disabled:opacity-50 disabled:pointer-events-none cursor-pointer",
   {
     variants: {
       tone: {
-        primary: "bg-terracotta text-on-dark shadow-raise hover:bg-terracotta-deep",
-        forest: "bg-forest text-on-dark shadow-raise hover:bg-forest-soft",
-        clay: "bg-cream text-ink shadow-raise hover:bg-cream-deep",
+        primary: "btn-solid bg-terracotta text-on-dark shadow-raise hover:bg-terracotta-deep",
+        forest: "btn-solid bg-forest text-on-dark shadow-raise hover:bg-forest-soft",
+        clay: "btn-solid bg-cream text-ink shadow-raise hover:bg-cream-deep",
         ghost: "text-ink hover:bg-[color-mix(in_oklab,var(--sand)_35%,transparent)]",
         danger: "text-danger hover:bg-[color-mix(in_oklab,var(--danger)_12%,transparent)]",
       },

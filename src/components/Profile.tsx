@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ImagePlus } from "@/components/icons";
+import { ImagePlus, Palette } from "@/components/icons";
 import { Button, Field, Input, Modal, cn } from "./ui";
 import { Bloom } from "./botanicals";
 import { pickImage } from "@/lib/api";
 import { useFileSrc, useNow } from "@/lib/hooks";
 import { useApp } from "@/lib/store";
-import type { ThemeId } from "@/lib/types";
+import type { StyleId, ThemeId } from "@/lib/types";
 
 export const THEMES: { id: ThemeId; name: string; note: string; swatch: string[] }[] = [
   { id: "marigold", name: "Marigold", note: "Warm plaster, terracotta and marigold", swatch: ["#f2e9db", "#bb6545", "#e5a72e", "#234b38"] },
@@ -160,7 +160,7 @@ export function ThemePicker() {
   const setSetting = useApp((s) => s.setSetting);
   const fail = useApp((s) => s.fail);
   return (
-    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div role="radiogroup" aria-label="Original colours" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {THEMES.map((t) => {
         const on = theme === t.id;
         return (
@@ -185,5 +185,89 @@ export function ThemePicker() {
         );
       })}
     </div>
+  );
+}
+
+export const STYLES: { id: StyleId; name: string; note: string }[] = [
+  { id: "original", name: "Original", note: "The handmade clay look, with the colour palettes below." },
+  { id: "soft3d", name: "Soft 3D", note: "Pastel mint and blush, glossy rounded surfaces and floating cards." },
+];
+
+/** A tiny drawing of each style, so the choice is visual. */
+function StyleSample({ id }: { id: StyleId }) {
+  const soft = id === "soft3d";
+  return (
+    <span
+      aria-hidden
+      className="relative block h-[74px] w-[112px] shrink-0 overflow-hidden rounded-[18px]"
+      style={{
+        background: soft ? "linear-gradient(145deg, #fbe0d8, #dcefe4 55%, #cfe7da)" : "#f2e9db",
+        boxShadow: soft ? "inset 1px 1px 0 #fff, 6px 8px 16px -6px rgb(46 88 68 / .35)" : "inset 2px 3px 1px rgb(255 255 255/.6), 0 8px 14px -8px rgb(92 62 38 / .45)",
+      }}
+    >
+      <span
+        className="absolute left-2.5 top-2.5 h-[34px] w-[52px]"
+        style={{
+          borderRadius: soft ? 12 : "14px 18px 12px 20px / 16px 12px 18px 14px",
+          background: soft ? "linear-gradient(150deg, #ffffff, #e6f1ea)" : "#f6ecdd",
+          boxShadow: soft ? "-3px -3px 6px #fff, 5px 6px 10px -2px rgb(46 88 68 / .3)" : "inset 1px 2px 0 #fff, 0 6px 8px -5px rgb(92 62 38 / .5)",
+        }}
+      />
+      <span
+        className="absolute bottom-2.5 left-2.5 h-[18px] w-[40px] rounded-full"
+        style={{ background: soft ? "linear-gradient(180deg, #6fb791, #3a8a66)" : "#bb6545" }}
+      />
+      <span
+        className="absolute right-2.5 top-2.5 h-[54px] w-[36px]"
+        style={{
+          borderRadius: soft ? 12 : "16px 12px 18px 12px / 12px 18px 12px 16px",
+          background: soft ? "linear-gradient(150deg, #fde9e3, #f4c0ab)" : "#e5a72e",
+          boxShadow: soft ? "4px 6px 10px -3px rgb(46 88 68 / .28)" : "0 6px 8px -5px rgb(92 62 38 / .5)",
+        }}
+      />
+    </span>
+  );
+}
+
+export function StylePicker() {
+  const style = useApp((s) => s.settings.style ?? "original");
+  const setSetting = useApp((s) => s.setSetting);
+  const fail = useApp((s) => s.fail);
+  return (
+    <div role="radiogroup" aria-label="Theme" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {STYLES.map((t) => {
+        const on = style === t.id;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            onClick={() => setSetting("style", t.id).catch(fail)}
+            className={cn("press flex items-center gap-3.5 rounded-[22px] p-3 text-left", on ? "bg-cream-deep shadow-sunk outline-2 outline-offset-2 outline-terracotta" : "hover:bg-cream-deep/60")}
+          >
+            <StyleSample id={t.id} />
+            <span className="min-w-0">
+              <span className="block text-md font-semibold text-ink">{t.name}</span>
+              <span className="block text-xs text-muted">{t.note}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** One-click switch between the two themes, in the top bar. */
+export function StyleToggle() {
+  const style = useApp((s) => s.settings.style ?? "original");
+  const setSetting = useApp((s) => s.setSetting);
+  const fail = useApp((s) => s.fail);
+  const next: StyleId = style === "soft3d" ? "original" : "soft3d";
+  const label = `Switch to the ${next === "soft3d" ? "Soft 3D" : "Original"} theme`;
+  return (
+    <Button tone="clay" size="icon" aria-label={label} title={label} onClick={() => setSetting("style", next).catch(fail)}>
+      <Palette size={19} />
+    </Button>
   );
 }

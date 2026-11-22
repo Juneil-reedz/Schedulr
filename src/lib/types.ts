@@ -132,6 +132,9 @@ export interface ComposioSettings {
   userId: string;
 }
 
+/** The overall look: the original clay, or the Soft 3D style. */
+export type StyleId = "original" | "soft3d";
+
 export type ThemeId = "marigold" | "talavera" | "seaglass" | "desertrose" | "night";
 
 export interface Profile {
@@ -141,6 +144,7 @@ export interface Profile {
 }
 
 export interface Settings {
+  style?: StyleId;
   theme?: ThemeId;
   profile?: Profile;
   focus?: Focus;

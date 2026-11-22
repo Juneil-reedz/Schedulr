@@ -27,8 +27,9 @@
   --on-dark: #fbf4e8;
   --danger: #a8432d;
 
-  /* text that sits on marigold, in every theme */
+  /* text that sits on marigold and on sage, in every theme */
   --on-marigold: #392c24;
+  --on-sage: var(--cream);
 
   /* derived surfaces */
   --shadow-ink: 92 62 38;
@@ -104,6 +105,39 @@
 /* Paintings keep their daylight greens and browns on the dark theme. */
 :root[data-theme="night"] svg:not(.lucide) {
   --forest: #2c5a43; --forest-soft: #3d6a52; --sage: #8d9c73; --espresso: #392c24; --cream: #f6ecdd; --sand: #dcc7a8; --on-dark: #fbf4e8;
+}
+
+/* ---------- Soft 3D theme ----------
+   A second visual style over the same layout: pastel mint and blush, smooth rounded
+   surfaces with a glossy highlight, two-light neumorphic shadows and deeper layering.
+   It overrides the colour roles and the elevation tokens; components read the same names. */
+:root[data-style="soft3d"] {
+  --ivory: #e3eee7; --plaster: #dbe8e0; --cream: #f6faf7; --cream-deep: #e2ece6; --sand: #c4d7cb;
+  --terracotta: #3a8a66; --terracotta-deep: #2d6f52; --terracotta-soft: #86c2a3;
+  --marigold: #f4c0ab; --marigold-soft: #f9d9cc;
+  --forest: #234d3c; --forest-soft: #3d705a; --sage: #8ec3a6; --sage-soft: #c6e3d3;
+  --rose: #f1a29b; --rose-soft: #f8ccc6; --espresso: #22372e; --espresso-soft: #546c61;
+  --on-dark: #ffffff; --on-marigold: #3b2a24; --on-sage: #1d4334; --danger: #b8473d;
+  --shadow-ink: 46 88 68;
+  --hi: 255 255 255; --hi-a: 0.9;
+  --field: #f8fbf9;
+  --clay-raise: inset 1px 1px 0 rgb(255 255 255 / 0.9), inset -2px -3px 6px rgb(var(--shadow-ink) / 0.06),
+    -6px -6px 16px rgb(255 255 255 / 0.7), 10px 14px 28px -6px rgb(var(--shadow-ink) / 0.22), 2px 3px 6px rgb(var(--shadow-ink) / 0.1);
+  --clay-lift: inset 1px 1px 0 rgb(255 255 255 / 0.9), -8px -8px 20px rgb(255 255 255 / 0.75),
+    18px 24px 40px -8px rgb(var(--shadow-ink) / 0.28), 3px 5px 10px rgb(var(--shadow-ink) / 0.12);
+  --clay-press: inset 4px 5px 10px rgb(var(--shadow-ink) / 0.2), inset -4px -4px 10px rgb(255 255 255 / 0.85);
+  --clay-sunk: inset 4px 5px 10px rgb(var(--shadow-ink) / 0.14), inset -5px -5px 10px rgb(255 255 255 / 0.9);
+  color-scheme: light;
+}
+:root[data-style="soft3d"] body {
+  background:
+    radial-gradient(60% 55% at 8% 0%, color-mix(in oklab, var(--rose-soft) 75%, transparent), transparent 62%),
+    radial-gradient(55% 55% at 100% 20%, color-mix(in oklab, var(--sage-soft) 85%, transparent), transparent 60%),
+    radial-gradient(70% 60% at 45% 105%, color-mix(in oklab, var(--marigold-soft) 60%, transparent), transparent 60%),
+    var(--ivory);
+}
+:root[data-style="soft3d"] body::before {
+  opacity: 0.04;
 }
 
 /* Sleep mode: a dim evening glaze laid over whichever theme is on. */
@@ -413,5 +447,65 @@ h3,
   }
   .board > .col-a {
     grid-column: auto;
+  }
+}
+
+/* ---------- Soft 3D surfaces and motion ---------- */
+@keyframes float-soft {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
+}
+@layer components {
+  :root[data-style="soft3d"] .clay {
+    background: linear-gradient(
+      150deg,
+      color-mix(in oklab, var(--clay-fill, var(--surface)) 68%, white) 0%,
+      var(--clay-fill, var(--surface)) 60%,
+      color-mix(in oklab, var(--clay-fill, var(--surface)) 90%, rgb(var(--shadow-ink))) 100%
+    );
+  }
+  :root[data-style="soft3d"] .clay::after {
+    opacity: 0;
+  }
+  /* glossy top light */
+  :root[data-style="soft3d"] .clay::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0) 42%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  :root[data-style="soft3d"] :is(.shape-a, .shape-b, .shape-c) {
+    --clay-radius: 30px;
+  }
+  :root[data-style="soft3d"] .shape-tile {
+    --clay-radius: 20px;
+  }
+  :root[data-style="soft3d"] .clay-lift {
+    transition: transform 320ms var(--ease-out), box-shadow 320ms var(--ease-out);
+  }
+  @media (hover: hover) {
+    :root[data-style="soft3d"] .clay-lift:hover {
+      transform: translateY(-5px) scale(1.012);
+    }
+  }
+  :root[data-style="soft3d"] .press:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: var(--clay-press);
+  }
+  /* buttons get a soft gloss on top of their colour */
+  :root[data-style="soft3d"] .btn-solid {
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0) 62%);
+  }
+  /* every card floats a little; the dashboard keeps its larger float */
+  :root[data-style="soft3d"] main .clay-lift:not(.floaty *),
+  :root[data-style="soft3d"] nav[aria-label="Main"] > ul {
+    animation: float-soft 7.5s var(--ease-soft) infinite;
+  }
+  :root[data-style="soft3d"] main li:nth-child(even) > .clay-lift,
+  :root[data-style="soft3d"] main .clay-lift:nth-child(even):not(.floaty *) {
+    animation-delay: -3.6s;
   }
 }
