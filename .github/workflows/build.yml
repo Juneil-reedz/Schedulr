@@ -118,7 +118,7 @@ jobs:
       - name: Read the app version
         id: version
         run: echo "tag=v$(node -p "require('./src-tauri/tauri.conf.json').version")" >> "$GITHUB_OUTPUT"
-      - run: ls -la dist
+      - run: ls -laR dist
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -128,4 +128,14 @@ jobs:
           make_latest: true
           overwrite_files: true
           fail_on_unmatched_files: false
-          files: dist/*
+          files: |
+            dist/**/*.exe
+            dist/**/*.exe.sig
+            dist/**/*.msi
+            dist/**/*.deb
+            dist/**/*.deb.sig
+            dist/**/*.rpm
+            dist/**/*.rpm.sig
+            dist/**/*.AppImage
+            dist/**/*.AppImage.sig
+            dist/latest.json
