@@ -395,6 +395,8 @@ fn show_main(app: &AppHandle) {
         let _ = w.show();
         let _ = w.set_focus();
     }
+    // Lets the window check for updates (and other fresh things) when it comes back from the tray.
+    let _ = app.emit("window-shown", ());
 }
 
 fn start_engine(app: AppHandle) {

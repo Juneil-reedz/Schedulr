@@ -4,7 +4,7 @@
    The browser preview has no updates, except with ?update in the address, which fakes one
    so the screens can be tried. */
 import { create } from "zustand";
-import { errorText, isDesktop } from "./api";
+import { errorText, isDesktop, listen } from "./api";
 import { useApp } from "./store";
 
 export type UpdateStatus = "idle" | "checking" | "current" | "available" | "downloading" | "installing" | "offline" | "error";
@@ -35,8 +35,9 @@ type DownloadEvent =
   | { event: "Finished" };
 
 let pending: Pending | null = null;
-/** Versions whose update window already popped up since Schedulr started. */
-const popped = new Set<string>();
+/** When the update window last popped up by itself, per version. */
+const popped = new Map<string, number>();
+const POP_AGAIN = 30 * 60 * 1000;
 
 /** Opens the update window when nothing else is open (a dialog the person is using wins). */
 function popUp(open: () => void, tries = 0) {
@@ -112,8 +113,8 @@ export const useUpdates = create<UpdateState>((set, get) => ({
         // A check the person asked for opens the window at once; an automatic one pops it
         // up once per launch for each new version, as soon as no other window is open.
         if (!quiet) set({ dialog: true });
-        else if (!popped.has(info.version)) {
-          popped.add(info.version);
+        else if (Date.now() - (popped.get(info.version) ?? 0) > POP_AGAIN) {
+          popped.set(info.version, Date.now());
           popUp(() => set({ dialog: true }));
         }
       } else if (!quiet) {
@@ -151,19 +152,35 @@ export const useUpdates = create<UpdateState>((set, get) => ({
   },
 }));
 
-const SIX_HOURS = 6 * 60 * 60 * 1000;
+const HOUR = 60 * 60 * 1000;
+const RECHECK = 15 * 60 * 1000;
 let started = false;
 
-/** Check shortly after start, every six hours, and whenever the internet comes back. */
+/* Schedulr keeps running in the tray when its window is closed, so opening the window is
+   usually not a fresh start. Updates are checked shortly after start, every hour, when
+   the internet comes back, and whenever the window is opened or brought to the front
+   (if the last check is more than 15 minutes old). An update that is already waiting
+   pops up again when the window is opened, at most every 30 minutes. */
 export function startUpdateChecks() {
   if (started || typeof window === "undefined") return;
   started = true;
   if (!isDesktop() && !fakeUpdate()) return;
   const quiet = () => useUpdates.getState().check({ quiet: true });
+  const opened = () => {
+    if (document.visibilityState !== "visible") return;
+    const { checkedAt, status, info, dialog } = useUpdates.getState();
+    if (status === "available" && info) {
+      if (!dialog && Date.now() - (popped.get(info.version) ?? 0) > POP_AGAIN) {
+        popped.set(info.version, Date.now());
+        popUp(() => useUpdates.getState().setDialog(true));
+      }
+    } else if (!checkedAt || Date.now() - checkedAt > RECHECK) quiet();
+  };
   setTimeout(quiet, 4_000);
-  setInterval(quiet, SIX_HOURS);
-  window.addEventListener("online", () => {
-    const { checkedAt, status } = useUpdates.getState();
-    if (status !== "available" && (!checkedAt || Date.now() - checkedAt > 30 * 60 * 1000)) quiet();
-  });
+  setInterval(quiet, HOUR);
+  window.addEventListener("online", opened);
+  window.addEventListener("focus", opened);
+  document.addEventListener("visibilitychange", opened);
+  // The desktop app also says when its window is shown from the tray.
+  listen("window-shown", opened);
 }
