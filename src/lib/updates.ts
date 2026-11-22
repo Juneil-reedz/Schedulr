@@ -35,6 +35,15 @@ type DownloadEvent =
   | { event: "Finished" };
 
 let pending: Pending | null = null;
+/** Versions whose update window already popped up since Schedulr started. */
+const popped = new Set<string>();
+
+/** Opens the update window when nothing else is open (a dialog the person is using wins). */
+function popUp(open: () => void, tries = 0) {
+  if (typeof document === "undefined") return;
+  if (!document.querySelector("[role=dialog]") || tries > 24) open();
+  else setTimeout(() => popUp(open, tries + 1), 5_000);
+}
 
 const fakeUpdate = () => typeof location !== "undefined" && new URLSearchParams(location.search).has("update");
 
@@ -100,7 +109,13 @@ export const useUpdates = create<UpdateState>((set, get) => ({
       set({ status: info ? "available" : "current", info, checkedAt: Date.now() });
       if (info) {
         await announce(info);
+        // A check the person asked for opens the window at once; an automatic one pops it
+        // up once per launch for each new version, as soon as no other window is open.
         if (!quiet) set({ dialog: true });
+        else if (!popped.has(info.version)) {
+          popped.add(info.version);
+          popUp(() => set({ dialog: true }));
+        }
       } else if (!quiet) {
         toast(isDesktop() ? "You have the newest version." : "Updates work in the desktop app.");
       }
@@ -145,7 +160,7 @@ export function startUpdateChecks() {
   started = true;
   if (!isDesktop() && !fakeUpdate()) return;
   const quiet = () => useUpdates.getState().check({ quiet: true });
-  setTimeout(quiet, 8_000);
+  setTimeout(quiet, 4_000);
   setInterval(quiet, SIX_HOURS);
   window.addEventListener("online", () => {
     const { checkedAt, status } = useUpdates.getState();

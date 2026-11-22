@@ -1,6 +1,6 @@
 [package]
 name = "schedulr"
-version = "1.2.0"
+version = "1.2.1"
 description = "Schedulr: a local-first floral desktop scheduler"
 authors = ["Schedulr"]
 edition = "2021"

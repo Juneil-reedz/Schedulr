@@ -1,5 +1,2 @@
-- Meet Pip, your royal herald: a little crowned bunny who greets you, reads out your day and announces reminders. Pip only talks; it never listens.
-- Pip hops along the tops of your cards. Drag Pip anywhere and it drops onto the card below; click to give a pat.
-- Pip reacts to your schedule: waving, cheering when you finish a task, surprised by urgent reminders and sleepy on quiet days.
-- Pip speaks in a little child's voice by default. Choose the look (bunny or marigold), voice and voice style, or mute or hide Pip, in Settings.
-- Reminder notifications now play a sound, so you notice them even when Schedulr is hidden. Pick the sound, or turn it off, in Settings.
+- New versions now pop up by themselves when you open Schedulr, so you never miss an update.
+- Pip has ten voice styles: Little girl, Little boy, Chipmunk, Cheerful, Friendly, Gentleman, Royal butler, Grandma, Gentle giant and Sleepy. Pick one in Settings to hear it.
