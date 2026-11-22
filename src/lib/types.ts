@@ -146,8 +146,8 @@ export interface CompanionSettings {
   character: "bunny" | "marigold";
   /** Walk along the tops of the cards. */
   roam: boolean;
-  /** Which royals Pip compares you to. */
-  title: "queen" | "king" | "monarch";
+  /** How Pip addresses you: Ma'am or Sir. (Older versions stored queen, king or monarch.) */
+  title: "maam" | "sir" | "queen" | "king" | "monarch";
   /** When Pip last greeted, so the full greeting happens once a day. */
   lastGreet?: string;
 }

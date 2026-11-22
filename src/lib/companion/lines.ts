@@ -1,6 +1,7 @@
 /* What Pip, the royal herald, says. Majestic, playful, a little sarcastic.
-   Every line is short. Placeholders: {Majesty} the honorific, {name} the person's first
-   name (or the honorific when there is none), {rulers} queens / kings / monarchs,
+   Every line is short. Placeholders: {Hon} "Ma'am" or "Sir", {Title} the honorific with
+   the first name ("Ma'am Danda", or just "Ma'am"), {name} the first name (or the
+   honorific when there is none), {rulers} queens or kings,
    {title} an event or reminder, {time}, {mins}, {count}, {things}. */
 
 export type Mood = "idle" | "greeting" | "talking" | "happy" | "surprised" | "sleepy";
@@ -58,113 +59,113 @@ export const MOOD: Record<Topic, Mood> = {
 
 export const LINES: Record<Topic, string[]> = {
   greetMorning: [
-    "{Majesty}, {name}! Your royal scheduler has arrived. Let's see what chaos awaits us today!",
-    "Good morning, {Majesty}! The kingdom is awake. The coffee, less so. Let's review the royal agenda.",
-    "Hail, {name}! I have polished my crown and your calendar. Only one of them was dusty.",
-    "Rise and reign, {name}! Your humble herald reporting for duty.",
+    "{Title}! Your royal scheduler has arrived. Let's see what chaos awaits us today!",
+    "Good morning, {Hon}! The kingdom is awake. The coffee, less so. Let's review the royal agenda.",
+    "Hail, {Title}! I have polished my crown and your calendar. Only one of them was dusty.",
+    "Rise and reign, {Title}! Your humble herald reporting for duty.",
   ],
   greetAfternoon: [
-    "Good afternoon, {Majesty}! Your royal scheduler has arrived, fashionably late, as is tradition.",
-    "Ah, {name}! The afternoon court is now in session. Let's see what's on the menu.",
-    "{Majesty}, {name}! Half the day is gone. Let's make the other half look intentional.",
+    "Good afternoon, {Hon}! Your royal scheduler has arrived, fashionably late, as is tradition.",
+    "Ah, {Title}! The afternoon court is now in session. Let's see what's on the menu.",
+    "{Title}! Half the day is gone. Let's make the other half look intentional.",
   ],
   greetEvening: [
-    "Good evening, {Majesty}! Still ruling at this hour? Bold. Let's see what's left.",
-    "Ah, {name}, the evening court opens. Candles lit, calendar ready.",
-    "Evening, {Majesty}! The sun has clocked out. We, apparently, have not.",
+    "Good evening, {Hon}! Still ruling at this hour? Bold. Let's see what's left.",
+    "Ah, {Title}, the evening court opens. Candles lit, calendar ready.",
+    "Evening, {Hon}! The sun has clocked out. We, apparently, have not.",
   ],
   greetNight: [
-    "{Majesty}, {name}, it is very late. Even the moon is yawning. A quick look, then bed?",
-    "Burning the royal midnight oil, {name}? I'll keep it brief. Mostly.",
+    "{Title}, it is very late. Even the moon is yawning. A quick look, then bed?",
+    "Burning the royal midnight oil, {Title}? I'll keep it brief. Mostly.",
   ],
   welcomeBack: [
-    "Back so soon, {Majesty}? I kept your throne warm.",
-    "Welcome back, {name}. Nothing exploded while you were away. Mostly.",
+    "Back so soon, {Hon}? I kept your throne warm.",
+    "Welcome back, {Title}. Nothing exploded while you were away. Mostly.",
     "The royal herald returns to duty! As do you, apparently.",
-    "Ah, {name}! I was just guarding your calendar. Fiercely. With my leaves.",
+    "Ah, {Title}! I was just guarding your calendar. Fiercely. With my leaves.",
   ],
   busy: [
-    "Oh, {Majesty}! Your schedule is busier than a royal banquet. {count} missions await you today!",
-    "{count} things today, {name}. I'd fetch you a second crown, but you'd only schedule it.",
-    "Brace yourself, {Majesty}: {count} items today. The royal calendar is sweating.",
+    "Oh, {Hon}! Your schedule is busier than a royal banquet. {count} missions await you today!",
+    "{count} things today, {Title}. I'd fetch you a second crown, but you'd only schedule it.",
+    "Brace yourself, {Hon}: {count} items today. The royal calendar is sweating.",
   ],
   some: [
-    "You have {things} today, {name}. First up: {title} at {time}.",
-    "A civilised day, {Majesty}: {things}. We begin with {title} at {time}.",
-    "The royal agenda holds {things}, {name}. Opening act: {title} at {time}.",
+    "You have {things} today, {Title}. First up: {title} at {time}.",
+    "A civilised day, {Hon}: {things}. We begin with {title} at {time}.",
+    "The royal agenda holds {things}, {Title}. Opening act: {title} at {time}.",
   ],
   one: [
-    "Just one thing today, {name}: {title} at {time}. A delightfully light royal workload.",
-    "One appointment, {Majesty}: {title} at {time}. Practically a holiday.",
+    "Just one thing today, {Title}: {title} at {time}. A delightfully light royal workload.",
+    "One appointment, {Hon}: {title} at {time}. Practically a holiday.",
   ],
   empty: [
-    "Well, well, {Majesty}! Nothing on your schedule today. Even {rulers} deserve a day off!",
-    "An empty calendar, {name}. I shall nap in solidarity.",
-    "No events, no meetings. {Majesty}, this is either peace or a conspiracy.",
+    "Well, well, {Hon}! Nothing on your schedule today. Even {rulers} deserve a day off!",
+    "An empty calendar, {Title}. I shall nap in solidarity.",
+    "No events, no meetings. {Hon}, this is either peace or a conspiracy.",
   ],
   tasksOnly: [
-    "No events today, {name}, but {things} due. They're looking at you.",
-    "A calendar free of events, {Majesty}! Just {things} due. A royal stroll, really.",
+    "No events today, {Title}, but {things} due. They're looking at you.",
+    "A calendar free of events, {Hon}! Just {things} due. A royal stroll, really.",
   ],
   dueToday: [
     "Also, {things} due today. They're looking at you.",
-    "And {things} due today, {name}. No pressure. Some pressure.",
+    "And {things} due today, {Title}. No pressure. Some pressure.",
   ],
   overdue: [
     "Oh, and {things} overdue. They've started a small rebellion.",
-    "Also, {things} overdue, {Majesty}. The peasants are restless.",
+    "Also, {things} overdue, {Hon}. The peasants are restless.",
   ],
   missed: [
     "While you were away, {count} reminders went off. I shouted. Nobody heard.",
-    "{Majesty}, {count} reminders rang while you were gone. They're waiting in Reminders.",
+    "{Hon}, {count} reminders rang while you were gone. They're waiting in Reminders.",
   ],
   soon: [
-    "Psst! {name}! {title} starts in {mins} minutes. The royal clock waits for no one!",
-    "Heads up, {Majesty}! {title} in {mins} minutes. Do try to look surprised.",
-    "{mins} minutes until {title}, {name}. Shall I sound the trumpets? I can't. But imagine them.",
+    "Psst! {Title}! {title} starts in {mins} minutes. The royal clock waits for no one!",
+    "Heads up, {Hon}! {title} in {mins} minutes. Do try to look surprised.",
+    "{mins} minutes until {title}, {Title}. Shall I sound the trumpets? I can't. But imagine them.",
   ],
   now: [
-    "{title} is starting now, {Majesty}! Go, go, go! Majestically!",
-    "It's time, {name}: {title}. Off you go, crown first.",
+    "{title} is starting now, {Hon}! Go, go, go! Majestically!",
+    "It's time, {Title}: {title}. Off you go, crown first.",
   ],
   reminder: [
-    "Royal reminder, {name}: {title}!",
+    "Royal reminder, {Title}: {title}!",
     "Hear ye, hear ye! {title}. That's the reminder. Carry on.",
-    "{Majesty}, a reminder has arrived by royal pigeon: {title}.",
+    "{Hon}, a reminder has arrived by royal pigeon: {title}.",
   ],
   taskDone: [
-    "Splendid work, {Majesty}! Another task conquered. Your kingdom is proud!",
-    "Task vanquished! {name}, the bards will sing of this. Briefly.",
+    "Splendid work, {Hon}! Another task conquered. Your kingdom is proud!",
+    "Task vanquished! {Title}, the bards will sing of this. Briefly.",
     "Done and dusted! I'd applaud, but I'm a flower.",
-    "Another one bites the royal dust. Well done, {name}!",
+    "Another one bites the royal dust. Well done, {Title}!",
   ],
   allDone: [
-    "Every task done, {Majesty}! I'm genuinely impressed. Don't get used to it.",
-    "The task list is empty, {name}! The kingdom celebrates. I celebrate. Mildly.",
+    "Every task done, {Hon}! I'm genuinely impressed. Don't get used to it.",
+    "The task list is empty, {Title}! The kingdom celebrates. I celebrate. Mildly.",
   ],
   quipNext: [
     "Next on the royal agenda: {title} at {time}. Plenty of time. Suspiciously plenty.",
-    "Just so you know, {name}: {title} at {time}. I'll be here. Watching. Lovingly.",
+    "Just so you know, {Title}: {title} at {time}. I'll be here. Watching. Lovingly.",
   ],
   quipOverdue: [
-    "Gentle reminder, {name}: {things} overdue. They've started a book club.",
-    "{Majesty}, {things} overdue. I'm not saying anything. I'm just saying it.",
+    "Gentle reminder, {Title}: {things} overdue. They've started a book club.",
+    "{Hon}, {things} overdue. I'm not saying anything. I'm just saying it.",
   ],
   quipFree: [
-    "Nothing left today, {Majesty}. The rest is royal leisure. Use it wisely. Or don't.",
-    "Your afternoon is free, {name}. I've cleared my schedule too. It was empty.",
+    "Nothing left today, {Hon}. The rest is royal leisure. Use it wisely. Or don't.",
+    "Your afternoon is free, {Title}. I've cleared my schedule too. It was empty.",
   ],
   pat: [
-    "Hehe! That tickles, {Majesty}!",
+    "Hehe! That tickles, {Hon}!",
     "A royal pat! I accept it graciously.",
-    "Careful, {name}, the crown is on loan.",
+    "Careful, {Title}, the crown is on loan.",
     "Ooh, more of that, please. For morale.",
     "You may pat the herald. Once. Okay, twice.",
   ],
   quipAny: [
-    "Remember to drink water, {Majesty}. Hydrated {rulers} rule better.",
-    "I've checked the calendar twice, {name}. It's still there.",
-    "Posture check, {Majesty}! Crowns slide off slouching heads.",
+    "Remember to drink water, {Hon}. Hydrated {rulers} rule better.",
+    "I've checked the calendar twice, {Title}. It's still there.",
+    "Posture check, {Hon}! Crowns slide off slouching heads.",
   ],
 };
 
@@ -185,6 +186,8 @@ export interface Vars {
 
 export interface Address {
   honorific: string;
+  /** Honorific and first name together, e.g. "Ma'am Danda". */
+  title: string;
   name: string;
   rulers: string;
 }
@@ -213,7 +216,8 @@ export function compose(topic: Topic, addr: Address, vars: Vars = {}) {
     /* memory is a nicety */
   }
   const text = pool[pick]
-    .replaceAll("{Majesty}", addr.honorific)
+    .replaceAll("{Title}", addr.title)
+    .replaceAll("{Hon}", addr.honorific)
     .replaceAll("{name}", addr.name)
     .replaceAll("{rulers}", addr.rulers)
     .replaceAll("{title}", vars.title ?? "")
@@ -221,6 +225,6 @@ export function compose(topic: Topic, addr: Address, vars: Vars = {}) {
     .replaceAll("{mins}", String(vars.mins ?? ""))
     .replaceAll("{count}", String(vars.count ?? ""))
     .replaceAll("{things}", vars.things ?? "");
-  // A capital letter after the honorific starts a sentence ("{name}!" can start one too).
+  // A capital letter after the honorific starts a sentence ("{Title}!" can start one too).
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

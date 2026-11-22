@@ -195,7 +195,7 @@ export function CompanionSettingsPanel() {
             value={s.pitch}
             onChange={(v) => save({ pitch: v })}
             options={[
-              { value: "child", label: "Little child" },
+              { value: "child", label: "Child" },
               { value: "high", label: "High" },
               { value: "normal", label: "Normal" },
               { value: "low", label: "Low" },
@@ -217,20 +217,20 @@ export function CompanionSettingsPanel() {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-muted">Royal comparisons</span>
+          <span className="text-sm font-semibold text-muted">Call me</span>
           <Segmented
-            label="Royal comparisons"
-            value={s.title}
+            label="How Pip addresses you"
+            value={s.title === "sir" || s.title === "king" ? "sir" : "maam"}
             onChange={(v) => save({ title: v })}
             options={[
-              { value: "queen", label: "Queen" },
-              { value: "king", label: "King" },
-              { value: "monarch", label: "Monarch" },
+              { value: "maam", label: "Ma'am" },
+              { value: "sir", label: "Sir" },
             ]}
             className="self-start"
           />
           <span className="text-xs text-muted">
-            Pip calls you Your Majesty{name.trim() ? `, ${name.trim().split(/\s+/)[0]}` : ""}. {name.trim() ? "" : "Add your name under Profile and Pip will use it."}
+            Pip says &ldquo;{s.title === "sir" || s.title === "king" ? "Sir" : "Ma'am"}
+            {name.trim() ? ` ${name.trim().split(/\s+/)[0]}` : ""}&rdquo;. {name.trim() ? "" : "Add your name under Profile and Pip will use it."}
           </span>
         </div>
       </div>

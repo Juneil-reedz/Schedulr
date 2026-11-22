@@ -7,7 +7,7 @@ import type { CompanionSettings } from "@/lib/types";
 import { compose, MOOD, type Address, type Mood, type Topic, type Vars } from "./lines";
 import { onFirstActivation, soundAllowed, speak } from "./voice";
 
-export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "child", title: "monarch", character: "bunny", roam: true };
+export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "child", title: "maam", character: "bunny", roam: true };
 
 export function pipSettings(): CompanionSettings {
   return { ...PIP_DEFAULTS, ...(useApp.getState().settings.companion ?? {}) };
@@ -47,8 +47,10 @@ let unheard: Line | null = null;
 function address(): Address {
   const s = pipSettings();
   const first = (useApp.getState().settings.profile?.name ?? "").trim().split(/\s+/)[0] ?? "";
-  const rulers = s.title === "queen" ? "queens" : s.title === "king" ? "kings" : "monarchs";
-  return { honorific: "Your Majesty", name: first || "Your Majesty", rulers };
+  // Older settings said queen / king / monarch.
+  const sir = s.title === "sir" || s.title === "king";
+  const honorific = sir ? "Sir" : "Ma'am";
+  return { honorific, title: first ? `${honorific} ${first}` : honorific, name: first || honorific, rulers: sir ? "kings" : "queens" };
 }
 
 function clearTimers() {
