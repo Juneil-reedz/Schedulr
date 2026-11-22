@@ -135,6 +135,19 @@ export interface ComposioSettings {
 /** The overall look: the original clay, Soft 3D, or Glass. */
 export type StyleId = "original" | "soft3d" | "glass";
 
+/** Pip, the royal herald who reads out the schedule. */
+export interface CompanionSettings {
+  enabled: boolean;
+  voice: boolean;
+  /** A voice name from the computer, or null for the best available. */
+  voiceName: string | null;
+  pitch: "low" | "normal" | "high";
+  /** Which royals Pip compares you to. */
+  title: "queen" | "king" | "monarch";
+  /** When Pip last greeted, so the full greeting happens once a day. */
+  lastGreet?: string;
+}
+
 /** A picture shown behind every page, in any theme. */
 export interface Backdrop {
   /** Stored attachment path, or a data URL in the browser preview. */
@@ -160,6 +173,7 @@ export interface Settings {
   theme?: ThemeId;
   profile?: Profile;
   backdrop?: Backdrop;
+  companion?: Partial<CompanionSettings>;
   /** The newest version the person was already told about. */
   updateNotified?: string;
   focus?: Focus;

@@ -12,6 +12,7 @@ import { Help, cn } from "./ui";
 import { Backdrop, ProfileChip, StyleToggle } from "./Profile";
 import { UpdateBadge, UpdateDialog } from "./Updates";
 import { FeedbackButton } from "./Feedback";
+import { Companion } from "./Companion";
 import { ensureNotificationPermission } from "@/lib/api";
 import { useApp } from "@/lib/store";
 
@@ -232,6 +233,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <TaskDialog />
           <NotesDialog />
           <UpdateDialog />
+          <Companion />
         </>
       )}
     </>

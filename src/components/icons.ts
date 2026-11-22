@@ -4,6 +4,8 @@
  */
 export {
   AlarmClock,
+  Volume2,
+  VolumeX,
   CircleCheck,
   Mail,
   MessageSquareHeart,

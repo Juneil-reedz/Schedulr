@@ -703,3 +703,10 @@ h3,
     background: #fffaf0;
   }
 }
+
+/* Pip's speech bubble stays easy to read over busy content in Glass. */
+@layer components {
+  :root[data-style="glass"] .pip-bubble.clay {
+    background: linear-gradient(165deg, rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.4) 50%, rgb(255 255 255 / 0.5)), rgb(255 252 245 / 0.82);
+  }
+}

@@ -1,3 +1,3 @@
-- Updates now arrive inside the app: Schedulr tells you when a new version is ready and installs it in one click.
-- Send feedback straight from Schedulr (top bar or Settings).
-- Glass theme, background picture, three layouts and floating cards everywhere.
+- Meet Pip, your royal herald: a little crowned marigold who greets you, reads out your day and announces reminders. Pip only talks; it never listens.
+- Pip reacts to your schedule: waving, cheering when you finish a task, surprised by urgent reminders and sleepy on quiet days.
+- Choose Pip's voice and pitch, or mute or hide Pip, in Settings.

@@ -10,6 +10,7 @@ import { parse } from "@/lib/dates";
 import { useApp } from "@/lib/store";
 import { BackdropPicker, LayoutPicker, ProfileForm, StylePicker, ThemePicker } from "@/components/Profile";
 import { UpdatesPanel } from "@/components/Updates";
+import { CompanionSettingsPanel } from "@/components/Companion";
 import { FeedbackForm } from "@/components/Feedback";
 import type { BackupFile, WeatherSettings } from "@/lib/types";
 
@@ -325,6 +326,12 @@ export default function SettingsPage() {
             <SectionTitle>Layout</SectionTitle>
             <p className="mb-3 mt-1 text-sm text-muted">Arranges the pages differently. Every page, button and feature stays the same. On a narrow window the menu always sits at the bottom.</p>
             <LayoutPicker />
+          </section>
+          <section className="clay shape-a px-6 py-5">
+            <SectionTitle>Pip, your royal herald</SectionTitle>
+            <div className="mt-1">
+              <CompanionSettingsPanel />
+            </div>
           </section>
           <section className="clay shape-a px-6 py-5">
             <SectionTitle>Reminders and startup</SectionTitle>
