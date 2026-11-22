@@ -404,6 +404,26 @@ h3,
 .floaty nav .clay-lift:nth-child(3) { animation-delay: -3.2s; }
 .floaty nav .clay-lift:nth-child(4) { animation-delay: -4.8s; }
 .floaty > .clay-lift { animation-duration: 8s; animation-delay: -3s; }
+/* Everywhere else, in every theme: each card on every page and the menu float gently.
+   Zero specificity, so the dashboard's larger float above still wins there. A card
+   holds still while you type in it. */
+@keyframes float-soft {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+:where(main .clay:not(.clay .clay), nav[aria-label="Main"] > ul) {
+  animation: float-soft 7.5s var(--ease-soft) infinite;
+}
+:where(main li:nth-child(even) > .clay, main .clay:not(.clay .clay):nth-child(even)) {
+  animation-delay: -3.6s;
+}
+:where(main li:nth-child(3n) > .clay, main .clay:not(.clay .clay):nth-child(3n)) {
+  animation-delay: -1.8s;
+  animation-duration: 8.4s;
+}
+:where(main .clay:focus-within) {
+  animation-play-state: paused;
+}
 .sway {
   transform-box: fill-box;
   transform-origin: 50% 100%;
@@ -553,10 +573,7 @@ h3,
 }
 
 /* ---------- Soft 3D surfaces and motion ---------- */
-@keyframes float-soft {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -3px; }
-}
+
 @layer components {
   :root[data-style="soft3d"] .clay {
     background: linear-gradient(
@@ -600,15 +617,6 @@ h3,
   /* buttons get a soft gloss on top of their colour */
   :root[data-style="soft3d"] .btn-solid {
     background-image: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0) 62%);
-  }
-  /* every card floats a little; the dashboard keeps its larger float */
-  :root:is([data-style="soft3d"], [data-style="glass"]) main .clay-lift:not(.floaty *),
-  :root:is([data-style="soft3d"], [data-style="glass"]) nav[aria-label="Main"] > ul {
-    animation: float-soft 7.5s var(--ease-soft) infinite;
-  }
-  :root:is([data-style="soft3d"], [data-style="glass"]) main li:nth-child(even) > .clay-lift,
-  :root:is([data-style="soft3d"], [data-style="glass"]) main .clay-lift:nth-child(even):not(.floaty *) {
-    animation-delay: -3.6s;
   }
 }
 
