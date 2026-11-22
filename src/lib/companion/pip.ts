@@ -7,7 +7,7 @@ import type { CompanionSettings } from "@/lib/types";
 import { compose, MOOD, type Address, type Mood, type Topic, type Vars } from "./lines";
 import { onFirstActivation, soundAllowed, speak } from "./voice";
 
-export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "normal", title: "monarch" };
+export const PIP_DEFAULTS: CompanionSettings = { enabled: true, voice: true, voiceName: null, pitch: "normal", title: "monarch", character: "bunny", roam: true };
 
 export function pipSettings(): CompanionSettings {
   return { ...PIP_DEFAULTS, ...(useApp.getState().settings.companion ?? {}) };

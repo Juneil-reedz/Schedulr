@@ -142,6 +142,10 @@ export interface CompanionSettings {
   /** A voice name from the computer, or null for the best available. */
   voiceName: string | null;
   pitch: "low" | "normal" | "high";
+  /** How Pip looks. */
+  character: "bunny" | "marigold";
+  /** Walk along the tops of the cards. */
+  roam: boolean;
   /** Which royals Pip compares you to. */
   title: "queen" | "king" | "monarch";
   /** When Pip last greeted, so the full greeting happens once a day. */
