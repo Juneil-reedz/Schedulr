@@ -156,13 +156,13 @@ export function ProfileDialog({ open, onOpenChange }: { open: boolean; onOpenCha
 }
 
 /** A choice card: the same frame for every option, a check on the chosen one. */
-function choiceClass(on: boolean) {
+export function choiceClass(on: boolean) {
   return cn(
     "press relative rounded-[20px] p-2.5 text-left outline-offset-2 transition-colors",
     on ? "bg-cream-deep shadow-sunk outline-2 outline-terracotta" : "bg-[color-mix(in_oklab,var(--cream-deep)_45%,transparent)] hover:bg-cream-deep",
   );
 }
-function Chosen({ on }: { on: boolean }) {
+export function Chosen({ on }: { on: boolean }) {
   if (!on) return null;
   return (
     <span aria-hidden className="absolute -right-1.5 -top-1.5 z-[1] grid h-6 w-6 place-items-center rounded-full bg-terracotta text-on-dark shadow-raise">

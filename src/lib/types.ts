@@ -141,7 +141,8 @@ export interface CompanionSettings {
   voice: boolean;
   /** A voice name from the computer, or null for the best available. */
   voiceName: string | null;
-  pitch: "low" | "normal" | "high" | "child";
+  /** The voice style (see VOICE_STYLES in companion/voice.ts). */
+  pitch: "child" | "boy" | "chipmunk" | "high" | "normal" | "low" | "butler" | "grandma" | "giant" | "sleepy";
   /** How Pip looks. */
   character: "bunny" | "marigold";
   /** Walk along the tops of the cards. */

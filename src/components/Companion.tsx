@@ -14,7 +14,8 @@ import type { CompanionSettings } from "@/lib/types";
 import { Bunny } from "./companion/Bunny";
 import { Marigold } from "./companion/Marigold";
 import { useWalker } from "./companion/useWalker";
-import { listVoices, onVoicesChanged, pickVoice } from "@/lib/companion/voice";
+import { listVoices, onVoicesChanged, pickVoice, VOICE_STYLES } from "@/lib/companion/voice";
+import { Chosen, choiceClass } from "./Profile";
 
 const SIZE = { bunny: { w: 92, h: 112 }, marigold: { w: 74, h: 88 } } as const;
 
@@ -151,7 +152,7 @@ export function CompanionSettingsPanel() {
   }, []);
   const english = voices.filter((v) => /^en/i.test(v.lang));
   const others = voices.filter((v) => !/^en/i.test(v.lang));
-  const auto = pickVoice(null, s.pitch === "child");
+  const auto = pickVoice(null, s.pitch);
 
   return (
     <div className="flex flex-col gap-1">
@@ -164,10 +165,36 @@ export function CompanionSettingsPanel() {
       <SettingRow title="Pip's voice" hint="Off shows the words only. Pip is also quiet during Do not disturb and Sleep.">
         <Toggle label="Pip's voice" checked={s.voice} onChange={(v) => save({ voice: v })} />
       </SettingRow>
-      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="Voice" htmlFor="pip-voice">
+      <div className="mt-4">
+        <span className="text-sm font-semibold text-muted">Voice style</span>
+        <p className="mb-2.5 text-xs text-muted">Pick one to hear it.</p>
+        <div role="radiogroup" aria-label="Voice style" className="grid grid-cols-2 gap-2.5 @md:grid-cols-3 @xl:grid-cols-5">
+          {VOICE_STYLES.map((v) => {
+            const on = s.pitch === v.id;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={async () => {
+                  await setSetting("companion", { ...s, pitch: v.id }).catch(fail);
+                  if (s.enabled) sample();
+                }}
+                className={cn(choiceClass(on), "flex flex-col gap-0.5 px-3 py-2.5")}
+              >
+                <Chosen on={on} />
+                <span className="text-sm font-semibold leading-tight text-ink">{v.name}</span>
+                <span className="text-xs leading-snug text-muted">{v.note}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Field label="Computer voice" htmlFor="pip-voice" className="sm:col-span-2">
           <Select id="pip-voice" value={s.voiceName ?? ""} onChange={(e) => save({ voiceName: e.target.value || null })} disabled={!voices.length}>
-            <option value="">{auto ? `Best available (${auto.name.replace(/^Microsoft\s+/, "")})` : "Best available"}</option>
+            <option value="">{auto ? `Matches the style (${auto.name.replace(/^Microsoft\s+/, "").replace(/ - .*$/, "")})` : "Matches the style"}</option>
             {english.length > 0 && (
               <optgroup label="English">
                 {english.map((v) => (
@@ -188,21 +215,6 @@ export function CompanionSettingsPanel() {
             )}
           </Select>
         </Field>
-        <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-muted">Voice style</span>
-          <Segmented
-            label="Voice style"
-            value={s.pitch}
-            onChange={(v) => save({ pitch: v })}
-            options={[
-              { value: "child", label: "Child" },
-              { value: "high", label: "High" },
-              { value: "normal", label: "Normal" },
-              { value: "low", label: "Low" },
-            ]}
-            className="self-start"
-          />
-        </div>
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-semibold text-muted">Look</span>
           <Segmented

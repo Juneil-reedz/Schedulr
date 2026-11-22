@@ -29,7 +29,8 @@ export type Topic =
   | "quipOverdue"
   | "quipFree"
   | "quipAny"
-  | "pat";
+  | "pat"
+  | "sample";
 
 export const MOOD: Record<Topic, Mood> = {
   greetMorning: "greeting",
@@ -55,6 +56,7 @@ export const MOOD: Record<Topic, Mood> = {
   quipFree: "sleepy",
   quipAny: "talking",
   pat: "happy",
+  sample: "greeting",
 };
 
 export const LINES: Record<Topic, string[]> = {
@@ -154,6 +156,11 @@ export const LINES: Record<Topic, string[]> = {
   quipFree: [
     "Nothing left today, {Hon}. The rest is royal leisure. Use it wisely. Or don't.",
     "Your afternoon is free, {Title}. I've cleared my schedule too. It was empty.",
+  ],
+  sample: [
+    "Hello, {Title}! This is how I sound.",
+    "Ta-da! {Title}, your herald, at your service.",
+    "Testing, testing! Can you hear me, {Title}?",
   ],
   pat: [
     "Hehe! That tickles, {Hon}!",

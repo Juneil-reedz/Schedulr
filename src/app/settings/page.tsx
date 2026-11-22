@@ -334,7 +334,7 @@ export default function SettingsPage() {
             <p className="mb-4 mt-1 text-sm text-muted">Arranges the pages differently. Every page, button and feature stays the same. On a narrow window the menu always sits at the bottom.</p>
             <LayoutPicker />
           </section>
-          <section className="clay shape-a px-6 py-5">
+          <section className="clay shape-a @container px-6 py-5">
             <SectionTitle>Pip, your royal herald</SectionTitle>
             <div className="mt-1">
               <CompanionSettingsPanel />

@@ -176,7 +176,7 @@ export const usePip = create<PipState>((set, get) => {
     sample: () => {
       cancelSpeech?.();
       set({ queue: [] });
-      const line: Line = { id: ++ids, topic: "greetMorning", text: compose("greetMorning", address()), mood: "greeting", sass: true, at: Date.now() };
+      const line: Line = { id: ++ids, topic: "sample", text: compose("sample", address()), mood: "greeting", sass: true, at: Date.now() };
       play(line);
     },
     stop: () => {
