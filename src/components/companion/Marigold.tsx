@@ -37,7 +37,7 @@ function Eye({ x, mood, blink }: { x: number; mood: Mood; blink: boolean }) {
     return <path d={`M${x - 6} 79 Q${x} 85 ${x + 6} 79`} fill="none" stroke={INK} strokeWidth={3} strokeLinecap="round" />;
   const big = mood === "surprised";
   return (
-    <motion.g animate={{ scaleY: blink ? 0.1 : 1 }} transition={{ duration: 0.07 }} style={{ originX: `${x}px`, originY: "80px" }}>
+    <motion.g animate={{ scaleY: blink ? 0.1 : 1 }} transition={{ duration: 0.07 }} style={{ transformBox: "view-box", originX: `${x}px`, originY: "80px" }}>
       <ellipse cx={x} cy={80} rx={big ? 6.6 : 5.3} ry={big ? 8.6 : 7.2} fill={INK} />
       <circle cx={x + 1.8} cy={77} r={big ? 2.3 : 1.9} fill="#fff" />
       <circle cx={x - 1.6} cy={83} r={0.9} fill="#fff" opacity={0.7} />
@@ -54,7 +54,7 @@ function Brows({ mood, sass }: { mood: Mood; sass: boolean }) {
       <motion.path
         d="M87 67 Q94 64 101 68"
         animate={{ y: lift + (sass && mood !== "surprised" ? -4 : 0), rotate: sass && mood !== "surprised" ? -9 : 0 }}
-        style={{ originX: "94px", originY: "66px" }}
+        style={{ transformBox: "view-box", originX: "94px", originY: "66px" }}
       />
     </g>
   );
@@ -68,7 +68,7 @@ function Mouth({ mood, speaking, word, still }: { mood: Mood; speaking: boolean;
         initial={{ scaleY: 0.3 }}
         animate={still ? { scaleY: 0.7 } : { scaleY: [0.3, 1, 0.5, 0.9, 0.35, 0.8, 0.4] }}
         transition={{ duration: 0.62, repeat: Infinity, ease: "easeInOut" }}
-        style={{ originX: "80px", originY: "101px" }}
+        style={{ transformBox: "view-box", originX: "80px", originY: "101px" }}
       >
         <ellipse cx={80} cy={101} rx={8.5} ry={6.5} fill="#5b2620" />
         <ellipse cx={80} cy={105} rx={5} ry={2.6} fill="#e98a86" />
@@ -147,7 +147,7 @@ export function Marigold({ mood, speaking, word, sass, cue, motion: move }: Char
         stroke={STEM}
         strokeWidth={1.6}
         animate={reduce ? {} : leftArm}
-        style={{ originX: "79px", originY: "146px" }}
+        style={{ transformBox: "view-box", originX: "79px", originY: "146px" }}
       />
       <motion.path
         d="M81 142 C90 128 110 126 118 136 C108 148 90 150 81 142 Z"
@@ -155,12 +155,12 @@ export function Marigold({ mood, speaking, word, sass, cue, motion: move }: Char
         stroke={STEM}
         strokeWidth={1.6}
         animate={reduce ? {} : wave}
-        style={{ originX: "81px", originY: "142px" }}
+        style={{ transformBox: "view-box", originX: "81px", originY: "142px" }}
       />
 
-      <motion.g animate={reduce ? {} : head[mood]} style={{ originX: "80px", originY: "120px" }}>
+      <motion.g animate={reduce ? {} : head[mood]} style={{ transformBox: "view-box", originX: "80px", originY: "120px" }}>
         {/* petals: a back ring and a front ring */}
-        <motion.g animate={{ scale: mood === "surprised" ? 1.07 : 1 }} style={{ originX: "80px", originY: "84px" }}>
+        <motion.g animate={{ scale: mood === "surprised" ? 1.07 : 1 }} style={{ transformBox: "view-box", originX: "80px", originY: "84px" }}>
           {PETALS.map((a) => (
             <ellipse
               key={`b${a}`}
@@ -199,7 +199,7 @@ export function Marigold({ mood, speaking, word, sass, cue, motion: move }: Char
         <motion.g
           animate={reduce ? {} : mood === "happy" ? { y: [0, -9, 0], rotate: [-8, -16, -8] } : mood === "sleepy" ? { rotate: -18, x: -4 } : { rotate: -8 }}
           transition={{ duration: mood === "happy" ? 0.9 : 0.6 }}
-          style={{ originX: "80px", originY: "46px" }}
+          style={{ transformBox: "view-box", originX: "80px", originY: "46px" }}
         >
           <path d="M57 50 L54 26 L68 38 L80 20 L92 38 L106 26 L103 50 Z" fill={GOLD} stroke={GOLD_EDGE} strokeWidth={2.2} strokeLinejoin="round" />
           <rect x={57} y={44} width={46} height={7} rx={2} fill={GOLD} stroke={GOLD_EDGE} strokeWidth={2} />
@@ -229,11 +229,11 @@ export function Marigold({ mood, speaking, word, sass, cue, motion: move }: Char
               animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 0], rotate: 40 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.3, delay: i * 0.08 }}
-              style={{ originX: `${x}px`, originY: `${y}px` }}
+              style={{ transformBox: "view-box", originX: `${x}px`, originY: `${y}px` }}
             />
           ))}
         {mood === "surprised" && (
-          <motion.g key={`x${cue}`} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }} style={{ originX: "136px", originY: "34px" }}>
+          <motion.g key={`x${cue}`} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }} style={{ transformBox: "view-box", originX: "136px", originY: "34px" }}>
             <path d="M134 14 L140 14 L138 38 L136 38 Z" fill="#c0392b" stroke="#7a1f16" strokeWidth={1.2} strokeLinejoin="round" />
             <circle cx={137} cy={45} r={3.4} fill="#c0392b" stroke="#7a1f16" strokeWidth={1.2} />
           </motion.g>

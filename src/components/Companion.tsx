@@ -16,7 +16,7 @@ import { Marigold } from "./companion/Marigold";
 import { useWalker } from "./companion/useWalker";
 import { listVoices, onVoicesChanged, pickVoice } from "@/lib/companion/voice";
 
-const SIZE = { bunny: { w: 78, h: 85 }, marigold: { w: 74, h: 88 } } as const;
+const SIZE = { bunny: { w: 92, h: 112 }, marigold: { w: 74, h: 88 } } as const;
 
 /** Pip on every page: walks along the tops of the cards, can be picked up and dropped,
     and shows a speech bubble while it talks. Pip never listens. */
