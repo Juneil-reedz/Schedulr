@@ -45,10 +45,31 @@ impl AppState {
     }
 }
 
-struct AppNotifier(AppHandle);
+/// The Windows sound played with each notification, chosen in Settings.
+/// Without one, Windows shows the notification silently. "off" means silent on purpose.
+fn notify_sound(conn: &Connection) -> Option<String> {
+    match store::get_setting(conn, "notifySound").and_then(|v| v.as_str().map(str::to_string)) {
+        Some(s) if s == "off" => None,
+        Some(s) if !s.is_empty() => Some(s),
+        _ => Some("Reminder".into()),
+    }
+}
+
+fn send_notification(app: &AppHandle, title: &str, body: &str, sound: Option<&str>) -> Result<(), String> {
+    let mut n = app.notification().builder().title(title).body(body);
+    if let Some(s) = sound {
+        n = n.sound(s);
+    }
+    n.show().map_err(|e| e.to_string())
+}
+
+struct AppNotifier {
+    app: AppHandle,
+    sound: Option<String>,
+}
 impl reminders::Notifier for AppNotifier {
     fn notify(&self, title: &str, body: &str) {
-        if let Err(e) = self.0.notification().builder().title(title).body(body).show() {
+        if let Err(e) = send_notification(&self.app, title, body, self.sound.as_deref()) {
             eprintln!("notification failed: {e}");
         }
     }
@@ -345,13 +366,9 @@ fn import_attachment(state: State<AppState>, src: String) -> Res<String> {
 }
 
 #[tauri::command]
-fn test_notification(app: AppHandle) -> Res<()> {
-    app.notification()
-        .builder()
-        .title("Schedulr reminders are on")
-        .body("This is how your reminders will appear.")
-        .show()
-        .map_err(err)
+fn test_notification(app: AppHandle, state: State<'_, AppState>) -> Res<()> {
+    let sound = notify_sound(&*state.db()?);
+    send_notification(&app, "Schedulr reminders are on", "This is how your reminders will appear and sound.", sound.as_deref())
 }
 
 // ---------------- app ----------------
@@ -367,9 +384,8 @@ fn show_main(app: &AppHandle) {
 fn start_engine(app: AppHandle) {
     std::thread::spawn(move || loop {
         let state = app.state::<AppState>();
-        let notifier = AppNotifier(app.clone());
         let changed = match state.db() {
-            Ok(db) => match reminders::tick(&db, now(), &notifier) {
+            Ok(db) => match reminders::tick(&db, now(), &AppNotifier { app: app.clone(), sound: notify_sound(&db) }) {
                 Ok(report) => report.changed(),
                 Err(e) => {
                     eprintln!("reminder engine: {e}");

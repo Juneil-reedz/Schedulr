@@ -364,7 +364,24 @@ export default function SettingsPage() {
             <Row title="24-hour clock">
               <Toggle label="24-hour clock" checked={s.clock24h ?? true} onChange={(v) => setSetting("clock24h", v).catch(fail)} />
             </Row>
-            <Row title="Test notification" hint="Check that Windows lets Schedulr show notifications.">
+            <Row title="Notification sound" hint="Windows plays this with every reminder, so you notice it even when Schedulr is hidden.">
+              <Select
+                aria-label="Notification sound"
+                className="w-auto min-w-[180px]"
+                value={(s.notifySound as string) ?? "Reminder"}
+                onChange={(e) => setSetting("notifySound", e.target.value).catch(fail)}
+              >
+                <option value="Reminder">Reminder chime</option>
+                <option value="Default">Windows default</option>
+                <option value="IM">Message</option>
+                <option value="Mail">Mail</option>
+                <option value="SMS">Text message</option>
+                <option value="Alarm">Alarm</option>
+                <option value="Call">Ringing</option>
+                <option value="off">No sound</option>
+              </Select>
+            </Row>
+            <Row title="Test notification" hint="Shows a sample notification with the sound above.">
               <Button tone="clay" size="sm" onClick={() => api.testNotification().then(() => toast("Sent"), fail)}>
                 Send one
               </Button>

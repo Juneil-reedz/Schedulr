@@ -178,6 +178,8 @@ export interface Settings {
   profile?: Profile;
   backdrop?: Backdrop;
   companion?: Partial<CompanionSettings>;
+  /** Windows sound for notifications: a toast sound name, or "off". */
+  notifySound?: string;
   /** The newest version the person was already told about. */
   updateNotified?: string;
   focus?: Focus;
