@@ -6,6 +6,8 @@ on:
     # dev/* branches build and test only; main also publishes the release.
     branches: [main, "dev/**"]
     tags: ["v*"]
+    # Text-only changes (like the privacy policy) do not rebuild the app.
+    paths-ignore: ["**.md", "docs/**"]
 
 permissions:
   contents: write
