@@ -128,23 +128,26 @@ function reminderInstances(from: Date, to: Date): ReminderItem[] {
 }
 
 function seed() {
+  // ?sample=clean (for screenshots and the trailer) uses real-looking names without the "Sample" labels.
+  const clean = new URLSearchParams(window.location.search).get("sample") === "clean";
+  const S = (t: string) => (clean ? t.charAt(0).toUpperCase() + t.slice(1) : `Sample: ${t}`);
   const today = new Date();
   const d = (offset: number, h: number, m = 0) => dtStr(new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset, h, m));
   const mk = (p: Partial<SchedEvent>): SchedEvent => ({ ...blankEvent(), id: id(), createdAt: now(), updatedAt: now(), ...p });
   events = [
-    mk({ kind: "meeting", title: "Sample: design review", categoryId: "meetings", start: d(0, 15, 0), end: d(0, 16, 0), important: true, locationType: "online", meetingUrl: "https://meet.example.com/sample", participants: [{ name: "Sample person", email: "person@example.com" }], agenda: "Sample agenda item", reminders: [{ id: "", offsetMinutes: 15, at: null }] }),
-    mk({ title: "Sample: stand-up", categoryId: "work", start: d(-3, 9, 30), end: d(-3, 9, 45), recur: { freq: "weekly", interval: 1, weekdays: [1, 2, 3, 4, 5], until: null, count: null }, reminders: [{ id: "", offsetMinutes: 5, at: null }] }),
-    mk({ title: "Sample: pottery class", categoryId: "personal", start: d(2, 18, 0), end: d(2, 20, 0), locationType: "physical", location: "Sample studio", reminders: [{ id: "", offsetMinutes: 60, at: null }] }),
-    mk({ title: "Sample: weekend away", categoryId: "family", allDay: true, start: dateStr(addDays(today, 5)), end: dateStr(addDays(today, 6)) }),
-    mk({ title: "Sample: dentist", categoryId: "health", start: d(1, 15, 30), end: d(1, 16, 15), reminders: [{ id: "", offsetMinutes: 1440, at: null }] }),
+    mk({ kind: "meeting", title: S("design review"), categoryId: "meetings", start: d(0, 15, 0), end: d(0, 16, 0), important: true, locationType: "online", meetingUrl: "https://meet.example.com/sample", participants: [{ name: clean ? "Jordan" : "Sample person", email: "person@example.com" }], agenda: clean ? "Review the new screens" : "Sample agenda item", reminders: [{ id: "", offsetMinutes: 15, at: null }] }),
+    mk({ title: S("stand-up"), categoryId: "work", start: d(-3, 9, 30), end: d(-3, 9, 45), recur: { freq: "weekly", interval: 1, weekdays: [1, 2, 3, 4, 5], until: null, count: null }, reminders: [{ id: "", offsetMinutes: 5, at: null }] }),
+    mk({ title: S("pottery class"), categoryId: "personal", start: d(2, 18, 0), end: d(2, 20, 0), locationType: "physical", location: clean ? "Clay studio" : "Sample studio", reminders: [{ id: "", offsetMinutes: 60, at: null }] }),
+    mk({ title: S("weekend away"), categoryId: "family", allDay: true, start: dateStr(addDays(today, 5)), end: dateStr(addDays(today, 6)) }),
+    mk({ title: S("dentist"), categoryId: "health", start: d(1, 15, 30), end: d(1, 16, 15), reminders: [{ id: "", offsetMinutes: 1440, at: null }] }),
   ];
   tasks = [
-    { id: id(), title: "Sample: send the slides", notes: "", categoryId: "work", due: d(0, 17), priority: 2, done: false, doneAt: null, eventId: null, recur: { freq: "none", interval: 1, weekdays: [], until: null, count: null }, remindOffset: 30, createdAt: now(), updatedAt: now() },
-    { id: id(), title: "Sample: water the plants", notes: "", categoryId: "personal", due: d(1, 8), priority: 1, done: false, doneAt: null, eventId: null, recur: { freq: "weekly", interval: 1, weekdays: [], until: null, count: null }, remindOffset: null, createdAt: now(), updatedAt: now() },
-    { id: id(), title: "Sample: book flights", notes: "", categoryId: "family", due: null, priority: 1, done: true, doneAt: now(), eventId: null, recur: { freq: "none", interval: 1, weekdays: [], until: null, count: null }, remindOffset: null, createdAt: now(), updatedAt: now() },
+    { id: id(), title: S("send the slides"), notes: "", categoryId: "work", due: d(0, 17), priority: 2, done: false, doneAt: null, eventId: null, recur: { freq: "none", interval: 1, weekdays: [], until: null, count: null }, remindOffset: 30, createdAt: now(), updatedAt: now() },
+    { id: id(), title: S("water the plants"), notes: "", categoryId: "personal", due: d(1, 8), priority: 1, done: false, doneAt: null, eventId: null, recur: { freq: "weekly", interval: 1, weekdays: [], until: null, count: null }, remindOffset: null, createdAt: now(), updatedAt: now() },
+    { id: id(), title: S("book flights"), notes: "", categoryId: "family", due: null, priority: 1, done: true, doneAt: now(), eventId: null, recur: { freq: "none", interval: 1, weekdays: [], until: null, count: null }, remindOffset: null, createdAt: now(), updatedAt: now() },
   ];
   notes = [
-    { id: id(), kind: "quote", body: "Sample quote: plant what you want to see bloom.", author: "Sample", pinned: false, createdAt: now(), updatedAt: now() },
+    { id: id(), kind: "quote", body: clean ? "Plant what you want to see bloom." : "Sample quote: plant what you want to see bloom.", author: clean ? "" : "Sample", pinned: false, createdAt: now(), updatedAt: now() },
     { id: id(), kind: "note", body: "Sample note: bring the blue folder on Friday.", author: "", pinned: true, createdAt: now(), updatedAt: now() },
   ];
   settings = { ...settings, focus: { dnd: false, work: false, personal: false, sleep: false } };

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { CircleCheck, Download, RefreshCw, Sparkles, WifiOff } from "@/components/icons";
 import { Button, Modal, cn } from "./ui";
 import { useApp } from "@/lib/store";
+import { STORE_PAGE, errorText, openUrl } from "@/lib/api";
 import { startUpdateChecks, useUpdates } from "@/lib/updates";
 
 function Notes({ text }: { text: string }) {
@@ -115,7 +116,27 @@ export function UpdatesPanel() {
   const { status, info, checkedAt, error, check, setDialog } = useUpdates();
   const version = useApp((s) => s.version);
   const desktop = useApp((s) => s.desktop);
+  const fromStore = useApp((s) => s.fromStore);
+  const toast = useApp((s) => s.toast);
   const checking = status === "checking";
+  if (fromStore) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="text-base text-ink">
+          Version <span className="num font-semibold">{version || "unknown"}</span>
+        </p>
+        <p className="flex items-start gap-2 text-sm text-muted">
+          <CircleCheck size={17} className="mt-0.5 shrink-0" aria-hidden />
+          <span>Updates arrive automatically through the Microsoft Store.</span>
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => openUrl(STORE_PAGE).catch((e) => toast(errorText(e), "error"))}>
+            <Download size={16} /> Open in Microsoft Store
+          </Button>
+        </div>
+      </div>
+    );
+  }
   const line = (() => {
     switch (status) {
       case "checking":

@@ -28,6 +28,14 @@
     },
     "opener:allow-reveal-item-in-dir",
     "opener:allow-open-url",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "ms-windows-store://*"
+        }
+      ]
+    },
     "updater:default",
     "process:allow-restart"
   ]

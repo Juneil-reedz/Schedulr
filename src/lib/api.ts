@@ -135,18 +135,21 @@ export async function listen(event: string, handler: () => void): Promise<() => 
   return l(event, handler);
 }
 
+/* Starting at sign-in. The desktop app chooses the right way: the Microsoft Store
+   package's startup task, or the usual sign-in entry for the normal install. */
 export const autostart = {
   async isEnabled() {
     if (!isDesktop()) return false;
-    const m = await import("@tauri-apps/plugin-autostart");
-    return m.isEnabled();
+    return call<boolean>("autostart_get");
   },
   async set(on: boolean) {
     if (!isDesktop()) throw "Launch at login needs the desktop app.";
-    const m = await import("@tauri-apps/plugin-autostart");
-    return on ? m.enable() : m.disable();
+    return call<boolean>("autostart_set", { on });
   },
 };
+
+/** Schedulr's page in the Microsoft Store. */
+export const STORE_PAGE = "ms-windows-store://pdp/?productid=9NBK75BNRB11";
 
 export async function ensureNotificationPermission() {
   if (!isDesktop()) return false;

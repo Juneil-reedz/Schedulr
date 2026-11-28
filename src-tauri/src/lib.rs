@@ -1,4 +1,5 @@
 mod ics;
+mod packaged;
 mod recur;
 mod reminders;
 mod store;
@@ -71,6 +72,9 @@ fn system_sound(name: &str) -> String {
 }
 
 fn send_notification(app: &AppHandle, title: &str, body: &str, sound: Option<&str>) -> Result<(), String> {
+    if packaged::is_packaged() {
+        return packaged::notify(title, body, sound);
+    }
     let mut n = app.notification().builder().title(title).body(body);
     if let Some(s) = sound {
         n = n.sound(system_sound(s));
@@ -104,6 +108,8 @@ struct Boot {
     paths: Paths,
     version: String,
     timezone: String,
+    /// Installed from the Microsoft Store, which delivers the updates.
+    store: bool,
 }
 
 #[tauri::command]
@@ -115,6 +121,7 @@ fn bootstrap(app: AppHandle, state: State<AppState>) -> Res<Boot> {
         paths: state.paths.clone(),
         version: app.package_info().version.to_string(),
         timezone: Local::now().format("%:z").to_string(),
+        store: packaged::is_packaged(),
     })
 }
 
@@ -386,6 +393,29 @@ fn test_notification(app: AppHandle, state: State<'_, AppState>) -> Res<()> {
     send_notification(&app, "Schedulr reminders are on", "This is how your reminders will appear and sound.", sound.as_deref())
 }
 
+/// Whether Schedulr starts when you sign in: the Store package's startup task, or the
+/// usual sign-in entry for the normal install.
+#[tauri::command]
+async fn autostart_get(app: AppHandle) -> Res<bool> {
+    use tauri_plugin_autostart::ManagerExt;
+    if packaged::is_packaged() {
+        return tauri::async_runtime::spawn_blocking(packaged::autostart_enabled).await.map_err(err)?;
+    }
+    app.autolaunch().is_enabled().map_err(err)
+}
+
+#[tauri::command]
+async fn autostart_set(app: AppHandle, on: bool) -> Res<bool> {
+    use tauri_plugin_autostart::ManagerExt;
+    if packaged::is_packaged() {
+        return tauri::async_runtime::spawn_blocking(move || packaged::set_autostart(on)).await.map_err(err)?;
+    }
+    let m = app.autolaunch();
+    let done = if on { m.enable() } else { m.disable() };
+    done.map_err(err)?;
+    m.is_enabled().map_err(err)
+}
+
 /// Windows speech voices for Pip, with whether each is a woman's voice.
 #[tauri::command]
 async fn tts_voices() -> Res<Vec<tts::Voice>> {
@@ -441,12 +471,14 @@ fn start_engine(app: AppHandle) {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+    // The Store delivers updates to the Store package, so it never updates itself.
+    let builder = if packaged::is_packaged() { builder } else { builder.plugin(tauri_plugin_updater::Builder::new().build()) };
+    builder
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| show_main(app)))
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--minimized"])))
         .setup(|app| {
@@ -496,7 +528,7 @@ pub fn run() {
             }
             tray.build(app)?;
 
-            if !std::env::args().any(|a| a == "--minimized") {
+            if !std::env::args().any(|a| a == "--minimized") && !packaged::started_at_sign_in() {
                 show_main(app.handle());
             }
             start_engine(app.handle().clone());
@@ -517,7 +549,7 @@ pub fn run() {
             find_conflicts, featured, tasks, save_task, set_task_done, delete_task, notes, save_note, delete_note,
             set_setting, reminder_feed, snooze_reminder, dismiss_reminder, complete_reminder, battery, backup_now,
             list_backups, restore_backup, export_json, export_ics, import_attachment, test_notification,
-            tts_voices, tts_render
+            tts_voices, tts_render, autostart_get, autostart_set
         ])
         .run(tauri::generate_context!())
         .expect("error while running Schedulr");

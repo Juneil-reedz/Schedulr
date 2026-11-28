@@ -99,6 +99,8 @@ export const useUpdates = create<UpdateState>((set, get) => ({
   check: async ({ quiet = false } = {}) => {
     const busy = ["checking", "downloading", "installing"];
     if (busy.includes(get().status)) return;
+    // The Microsoft Store delivers updates to the Store version.
+    if (useApp.getState().fromStore) return;
     const toast = useApp.getState().toast;
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       set({ status: "offline", error: null });

@@ -18,6 +18,8 @@ interface AppState {
   desktop: boolean;
   version: string;
   timezone: string;
+  /** Installed from the Microsoft Store: the Store delivers updates, so the app never checks. */
+  fromStore: boolean;
   paths: { data: string; db: string; attachments: string; backups: string; exports: string } | null;
   settings: Settings;
   categories: Category[];
@@ -60,6 +62,7 @@ export const useApp = create<AppState>((set, get) => ({
   desktop: false,
   version: "",
   timezone: "",
+  fromStore: false,
   paths: null,
   settings: {},
   categories: [],
@@ -84,6 +87,7 @@ export const useApp = create<AppState>((set, get) => ({
         desktop: isDesktop(),
         version: boot.version,
         timezone: boot.timezone,
+        fromStore: !!boot.store,
         paths: boot.paths,
         settings: boot.settings,
         categories: boot.categories,
@@ -170,4 +174,9 @@ export function useVisible() {
 export function useCategory() {
   const categories = useApp((s) => s.categories);
   return (id: string | null | undefined) => categories.find((c) => c.id === id);
+}
+
+// Browser preview only: lets the preview's tests and recordings set up sample data.
+if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_PREVIEW === "1") {
+  (window as unknown as { __app: typeof useApp }).__app = useApp;
 }

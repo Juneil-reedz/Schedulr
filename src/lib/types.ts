@@ -209,6 +209,8 @@ export interface Boot {
   paths: Paths;
   version: string;
   timezone: string;
+  /** Installed from the Microsoft Store, which delivers the updates. */
+  store?: boolean;
 }
 
 export interface Battery {
