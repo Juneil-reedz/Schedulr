@@ -36,10 +36,15 @@ Write-Host "Windows SDK tools: $($sdk.DirectoryName)"
 $cfg = Join-Path $work "priconfig.xml"
 & $makepri createconfig /cf $cfg /dq en-US /pv 10.0.0 /o
 if ($LASTEXITCODE) { throw "makepri createconfig failed" }
+# One index for every icon size (the default splits sizes into files meant for bundles).
+[xml]$x = Get-Content $cfg
+$x.resources.SelectNodes("//packaging") | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }
+$x.Save($cfg)
 & $makepri new /pr $stage /cf $cfg /mn (Join-Path $stage "AppxManifest.xml") /of (Join-Path $stage "resources.pri") /o
 if ($LASTEXITCODE) { throw "makepri new failed" }
 
 New-Item -ItemType Directory -Force (Split-Path $Out) | Out-Null
 & $makeappx pack /d $stage /p $Out /o
 if ($LASTEXITCODE) { throw "makeappx pack failed" }
+Get-ChildItem $stage -Filter "resources*.pri" | ForEach-Object { Write-Host "Included $($_.Name)" }
 Write-Host "Built $Out (version $v)"
